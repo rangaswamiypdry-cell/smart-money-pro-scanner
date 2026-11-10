@@ -1,1750 +1,742 @@
-// =====================================================
-// SMART MONEY PRO SCANNER V3
-// PART 1 / 2
-// INDEX + OPTIONS MOMENTUM ENGINE
-// NODE JS 20+ | UPSTOX V3
-// =====================================================
+// =================================================
+// SMART TRADE INDIA
+// BETA 2.0 VERY STRONG MOMENTUM ENGINE
+// PART 1
+// NODE.JS 20+
+// =================================================
 
 "use strict";
 
-const http = require("http");
-const { URL } = require("url");
+const BETA_CONFIG = {
+    benchmark: "NSE_INDEX|Nifty 50",
+    betaMinimum: 2.0,
+    betaPeriod: 60,
 
-const PORT = Number(process.env.PORT || 10000);
+    timeframe: 5,
 
-const TOKEN =
-  process.env.UPSTOX_ACCESS_TOKEN || "";
+    rsiBullish: 65,
+    rsiBearish: 35,
 
-const API_BASE =
-  "https://api.upstox.com";
+    volumeMultiplier: 1.5,
+    emaPeriod: 20,
 
-const CACHE_MS = 15000;
-
-const CANDLE_INTERVAL = 5;
-
-const MIN_CANDLES = 21;
-
-const VOLUME_MULTIPLIER = 2;
-
-const REQUEST_TIMEOUT = 15000;
-
-// =====================================================
-// INDEX CONFIGURATION
-// =====================================================
-
-const INDEXES = {
-
-  NIFTY: {
-    name: "NIFTY 50",
-    exchange: "NSE",
-    key:
-      process.env.NIFTY_INDEX_KEY ||
-      "NSE_INDEX|Nifty 50"
-  },
-
-  BANKNIFTY: {
-    name: "BANK NIFTY",
-    exchange: "NSE",
-    key:
-      process.env.BANKNIFTY_INDEX_KEY ||
-      "NSE_INDEX|Nifty Bank"
-  },
-
-  SENSEX: {
-    name: "SENSEX",
-    exchange: "BSE",
-    key:
-      process.env.SENSEX_INDEX_KEY ||
-      "BSE_INDEX|SENSEX"
-  },
-
-  FINNIFTY: {
-    name: "FINNIFTY",
-    exchange: "NSE",
-    key:
-      process.env.FINNIFTY_INDEX_KEY ||
-      "NSE_INDEX|Nifty Fin Service"
-  },
-
-  MIDCPNIFTY: {
-    name: "MIDCAP NIFTY",
-    exchange: "NSE",
-    key:
-      process.env.MIDCPNIFTY_INDEX_KEY ||
-      "NSE_INDEX|Nifty Midcap Select"
-  }
-
+    minimumCandles: 25
 };
 
-// =====================================================
-// GLOBAL CACHE
-// =====================================================
+// ================================================
+// UPSTOX API
+// ================================================
 
-const cache = new Map();
+async function betaApiRequest(url) {
 
-const optionHistory = new Map();
+    const token = process.env.UPSTOX_ACCESS_TOKEN;
 
-// =====================================================
-// JSON RESPONSE
-// =====================================================
-
-function send(res, status, data) {
-
-  res.writeHead(status, {
-
-    "Content-Type":
-      "application/json; charset=utf-8",
-
-    "Access-Control-Allow-Origin": "*",
-
-    "Access-Control-Allow-Methods":
-      "GET,OPTIONS",
-
-    "Access-Control-Allow-Headers":
-      "Content-Type,Authorization",
-
-    "Cache-Control": "no-store"
-
-  });
-
-  res.end(JSON.stringify(data));
-
-}
-
-// =====================================================
-// API REQUEST VALIDATION
-// =====================================================
-
-async function upstoxGet(path) {
-
-  if (!TOKEN) {
-
-    throw new Error(
-      "UPSTOX_ACCESS_TOKEN missing"
-    );
-
-  }
-
-  const response = await fetch(
-
-    `${API_BASE}${path}`,
-
-    {
-
-      method: "GET",
-
-      headers: {
-
-        "Accept": "application/json",
-
-        "Authorization":
-          `Bearer ${TOKEN}`
-
-      },
-
-      signal:
-        AbortSignal.timeout(REQUEST_TIMEOUT)
-
+    if (!token) {
+        throw new Error("UPSTOX_ACCESS_TOKEN missing");
     }
 
-  );
-
-  const body = await response
-    .json()
-    .catch(() => ({}));
-
-  if (!response.ok) {
-
-    const error = new Error(
-
-      body?.errors?.[0]?.message ||
-
-      body?.message ||
-
-      `Upstox HTTP ${response.status}`
-
-    );
-
-    error.status = response.status;
-
-    error.details = body;
-
-    throw error;
-
-  }
-
-  if (body.status && body.status !== "success") {
-
-    throw new Error(
-      "Invalid Upstox API response"
-    );
-
-  }
-
-  return body;
-
-}
-
-// =====================================================
-// INSTRUMENT KEY VALIDATION
-// =====================================================
-
-function validateInstrumentKey(key) {
-
-  if (
-    typeof key !== "string" ||
-    !key.includes("|") ||
-    key.length < 5
-  ) {
-
-    throw new Error(
-      "Invalid instrument key: " + key
-    );
-
-  }
-
-  return true;
-
-}
-
-// =====================================================
-// GET 5 MINUTE CANDLES
-// =====================================================
-
-async function getCandles(instrumentKey) {
-
-  validateInstrumentKey(instrumentKey);
-
-  const path =
-
-    `/v3/historical-candle/intraday/` +
-
-    `${encodeURIComponent(instrumentKey)}` +
-
-    `/minutes/${CANDLE_INTERVAL}`;
-
-  const json = await upstoxGet(path);
-
-  const rows = json?.data?.candles;
-
-  if (!Array.isArray(rows)) {
-
-    throw new Error(
-      "Candle data missing from Upstox"
-    );
-
-  }
-
-  return rows;
-
-}
-
-// =====================================================
-// COMPLETED CANDLE FILTER
-// =====================================================
-
-function completedCandles(rows) {
-
-  const now = Date.now();
-
-  return rows
-
-    .filter(row => {
-
-      if (
-        !Array.isArray(row) ||
-        row.length < 6
-      ) {
-
-        return false;
-
-      }
-
-      const time =
-        new Date(row[0]).getTime();
-
-      return (
-
-        Number.isFinite(time) &&
-
-        time + 300000 <= now
-
-      );
-
-    })
-
-    .map(row => ({
-
-      time: row[0],
-
-      open: Number(row[1]),
-
-      high: Number(row[2]),
-
-      low: Number(row[3]),
-
-      close: Number(row[4]),
-
-      volume: Number(row[5] || 0),
-
-      oi: Number(row[6] || 0)
-
-    }))
-
-    .filter(c =>
-
-      [
-
-        c.open,
-
-        c.high,
-
-        c.low,
-
-        c.close,
-
-        c.volume
-
-      ].every(Number.isFinite)
-
-    )
-
-    .sort((a, b) =>
-
-      new Date(a.time) -
-      new Date(b.time)
-
-    );
-
-}
-
-// =====================================================
-// AVERAGE
-// =====================================================
-
-function average(values) {
-
-  if (!values.length) return 0;
-
-  return values.reduce(
-
-    (sum, value) => sum + value,
-
-    0
-
-  ) / values.length;
-
-}
-
-// =====================================================
-// EMA 20
-// =====================================================
-
-function calculateEMA(values, period = 20) {
-
-  if (values.length < period) {
-
-    return null;
-
-  }
-
-  const multiplier =
-    2 / (period + 1);
-
-  let result = average(
-    values.slice(0, period)
-  );
-
-  for (
-    let i = period;
-    i < values.length;
-    i++
-  ) {
-
-    result =
-
-      values[i] * multiplier +
-
-      result * (1 - multiplier);
-
-  }
-
-  return result;
-
-}
-
-// =====================================================
-// RSI WILDER
-// =====================================================
-
-function calculateRSI(values, period = 14) {
-
-  if (values.length <= period) {
-
-    return null;
-
-  }
-
-  let gains = 0;
-
-  let losses = 0;
-
-  for (let i = 1; i <= period; i++) {
-
-    const change =
-      values[i] - values[i - 1];
-
-    if (change > 0) {
-
-      gains += change;
-
-    } else {
-
-      losses += Math.abs(change);
-
+    const response = await fetch(url, {
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Accept": "application/json"
+        },
+        signal: AbortSignal.timeout(20000)
+    });
+
+    if (!response.ok) {
+        throw new Error(
+            `Upstox API Error: ${response.status}`
+        );
     }
 
-  }
+    const json = await response.json();
 
-  let avgGain = gains / period;
+    if (json.status !== "success") {
+        throw new Error("Invalid Upstox response");
+    }
 
-  let avgLoss = losses / period;
-
-  for (
-    let i = period + 1;
-    i < values.length;
-    i++
-  ) {
-
-    const change =
-      values[i] - values[i - 1];
-
-    avgGain = (
-
-      avgGain * (period - 1) +
-
-      Math.max(change, 0)
-
-    ) / period;
-
-    avgLoss = (
-
-      avgLoss * (period - 1) +
-
-      Math.max(-change, 0)
-
-    ) / period;
-
-  }
-
-  if (avgLoss === 0) return 100;
-
-  const rs = avgGain / avgLoss;
-
-  return 100 - (100 / (1 + rs));
-
+    return json.data.candles || [];
 }
 
-// =====================================================
+// ================================================
+// DAILY HISTORICAL CANDLES
+// ================================================
+
+async function getBetaDailyCandles(instrumentKey) {
+
+    const to = new Date();
+
+    const from = new Date();
+    from.setDate(from.getDate() - 120);
+
+    const formatDate = d =>
+        d.toISOString().slice(0, 10);
+
+    const url =
+        "https://api.upstox.com/v3/historical-candle/" +
+        encodeURIComponent(instrumentKey) +
+        "/days/1/" +
+        formatDate(to) + "/" +
+        formatDate(from);
+
+    return await betaApiRequest(url);
+}
+
+// ================================================
+// RETURN CALCULATION
+// ================================================
+
+function betaReturns(candles) {
+
+    const sorted = [...candles].sort(
+        (a, b) =>
+            new Date(a[0]) - new Date(b[0])
+    );
+
+    const returns = [];
+
+    for (let i = 1; i < sorted.length; i++) {
+
+        const previous = Number(sorted[i - 1][4]);
+        const current = Number(sorted[i][4]);
+
+        if (previous <= 0 || current <= 0) continue;
+
+        returns.push(current / previous - 1);
+    }
+
+    return returns;
+}
+
+// ================================================
+// BETA CALCULATION
+// ================================================
+
+function calculateBeta(stockCandles, indexCandles) {
+
+    const stock = betaReturns(stockCandles);
+    const index = betaReturns(indexCandles);
+
+    const n = Math.min(
+        stock.length,
+        index.length
+    );
+
+    if (n < BETA_CONFIG.betaPeriod) {
+        return null;
+    }
+
+    const s = stock.slice(-BETA_CONFIG.betaPeriod);
+    const m = index.slice(-BETA_CONFIG.betaPeriod);
+
+    const mean = arr =>
+        arr.reduce((a, b) => a + b, 0) / arr.length;
+
+    const stockMean = mean(s);
+    const marketMean = mean(m);
+
+    let covariance = 0;
+    let variance = 0;
+
+    for (let i = 0; i < n; i++) {
+
+        covariance +=
+            (s[i] - stockMean) *
+            (m[i] - marketMean);
+
+        variance +=
+            Math.pow(m[i] - marketMean, 2);
+    }
+
+    if (variance === 0) return null;
+
+    return Number(
+        (covariance / variance).toFixed(2)
+    );
+}
+
+// ================================================
+// RSI CALCULATION
+// ================================================
+
+function betaRSI(closes, period = 14) {
+
+    if (closes.length <= period) return null;
+
+    let gains = 0;
+    let losses = 0;
+
+    for (let i = 1; i <= period; i++) {
+
+        const change = closes[i] - closes[i - 1];
+
+        if (change > 0) gains += change;
+        else losses -= change;
+    }
+
+    let avgGain = gains / period;
+    let avgLoss = losses / period;
+
+    for (let i = period + 1; i < closes.length; i++) {
+
+        const change = closes[i] - closes[i - 1];
+
+        avgGain =
+            (avgGain * (period - 1) + Math.max(change, 0))
+            / period;
+
+        avgLoss =
+            (avgLoss * (period - 1) + Math.max(-change, 0))
+            / period;
+    }
+
+    if (avgLoss === 0) return 100;
+
+    const rs = avgGain / avgLoss;
+
+    return Number(
+        (100 - 100 / (1 + rs)).toFixed(2)
+    );
+}
+
+// ================================================
+// EMA CALCULATION
+// ================================================
+
+function betaEMA(values, period = 20) {
+
+    if (values.length < period) return null;
+
+    const multiplier = 2 / (period + 1);
+
+    let ema = values
+        .slice(0, period)
+        .reduce((a, b) => a + b, 0) / period;
+
+    for (let i = period; i < values.length; i++) {
+
+        ema =
+            (values[i] - ema) * multiplier + ema;
+    }
+
+    return ema;
+}
+
+console.log(
+    // ======================================================
+// SMART TRADE INDIA
+// BETA 2.0 VERY STRONG MOMENTUM SCANNER
+// PART 2 FULL CODE
+// NSE F&O + UPSTOX V3
+// ======================================================
+
+const betaZlib = require("zlib");
+
+const BETA_INDEX_KEY = "NSE_INDEX|Nifty 50";
+
+let betaInstrumentCache = [];
+let betaInstrumentCacheTime = 0;
+
+const betaDailyCache = new Map();
+
+const BETA_CACHE_TIME = 6 * 60 * 60 * 1000;
+
+// ======================================================
+// NSE F&O STOCK MASTER
+// ======================================================
+
+async function loadBetaFnoStocks() {
+
+    if (
+        betaInstrumentCache.length &&
+        Date.now() - betaInstrumentCacheTime < 86400000
+    ) {
+        return betaInstrumentCache;
+    }
+
+    const url =
+        "https://assets.upstox.com/market-quote/instruments/exchange/complete.json.gz";
+
+    const response = await fetch(url);
+
+    if (!response.ok) {
+        throw new Error("NSE FNO Instrument Download Failed");
+    }
+
+    const buffer = Buffer.from(
+        await response.arrayBuffer()
+    );
+
+    const jsonText = betaZlib
+        .gunzipSync(buffer)
+        .toString("utf8");
+
+    const instruments = JSON.parse(jsonText);
+
+    const fnoSymbols = new Set();
+    const equityMap = new Map();
+
+    for (const item of instruments) {
+
+        if (
+            item.segment === "NSE_FO" &&
+            item.instrument_type === "FUT" &&
+            item.underlying_symbol
+        ) {
+            fnoSymbols.add(item.underlying_symbol);
+        }
+
+        if (
+            item.segment === "NSE_EQ" &&
+            item.instrument_type === "EQ" &&
+            item.trading_symbol &&
+            item.instrument_key
+        ) {
+            equityMap.set(
+                item.trading_symbol,
+                item.instrument_key
+            );
+        }
+    }
+
+    betaInstrumentCache = [...fnoSymbols]
+        .map(symbol => ({
+            symbol,
+            instrumentKey: equityMap.get(symbol)
+        }))
+        .filter(stock => stock.instrumentKey);
+
+    betaInstrumentCacheTime = Date.now();
+
+    return betaInstrumentCache;
+}
+
+// ======================================================
+// DATE ALIGNED BETA CALCULATION
+// ======================================================
+
+function betaCalculateAligned(stockCandles, indexCandles) {
+
+    const stockMap = new Map();
+
+    for (const candle of stockCandles) {
+
+        const date = String(candle[0]).slice(0, 10);
+
+        stockMap.set(date, Number(candle[4]));
+    }
+
+    const pairs = [];
+
+    for (const candle of indexCandles) {
+
+        const date = String(candle[0]).slice(0, 10);
+
+        const stockClose = stockMap.get(date);
+        const indexClose = Number(candle[4]);
+
+        if (
+            Number.isFinite(stockClose) &&
+            stockClose > 0 &&
+            Number.isFinite(indexClose) &&
+            indexClose > 0
+        ) {
+            pairs.push({
+                date,
+                stockClose,
+                indexClose
+            });
+        }
+    }
+
+    pairs.sort((a, b) =>
+        a.date.localeCompare(b.date)
+    );
+
+    if (pairs.length < 61) return null;
+
+    const stockReturns = [];
+    const indexReturns = [];
+
+    for (let i = 1; i < pairs.length; i++) {
+
+        stockReturns.push(
+            pairs[i].stockClose /
+            pairs[i - 1].stockClose - 1
+        );
+
+        indexReturns.push(
+            pairs[i].indexClose /
+            pairs[i - 1].indexClose - 1
+        );
+    }
+
+    const stock = stockReturns.slice(-60);
+    const market = indexReturns.slice(-60);
+
+    const mean = arr =>
+        arr.reduce((a, b) => a + b, 0) / arr.length;
+
+    const stockMean = mean(stock);
+    const marketMean = mean(market);
+
+    let covariance = 0;
+    let variance = 0;
+
+    for (let i = 0; i < 60; i++) {
+
+        covariance +=
+            (stock[i] - stockMean) *
+            (market[i] - marketMean);
+
+        variance += Math.pow(
+            market[i] - marketMean,
+            2
+        );
+    }
+
+    if (variance === 0) return null;
+
+    return Number(
+        (covariance / variance).toFixed(2)
+    );
+}
+
+// ======================================================
+// CACHED BETA
+// ======================================================
+
+async function getCachedBeta(stockKey) {
+
+    const cached = betaDailyCache.get(stockKey);
+
+    if (
+        cached &&
+        Date.now() - cached.time < BETA_CACHE_TIME
+    ) {
+        return cached.beta;
+    }
+
+    const [stockCandles, indexCandles] =
+        await Promise.all([
+            getBetaDailyCandles(stockKey),
+            getBetaDailyCandles(BETA_INDEX_KEY)
+        ]);
+
+    const beta = betaCalculateAligned(
+        stockCandles,
+        indexCandles
+    );
+
+    betaDailyCache.set(stockKey, {
+        beta,
+        time: Date.now()
+    });
+
+    return beta;
+}
+
+// ======================================================
+// 5 MINUTE INTRADAY CANDLES
+// ======================================================
+
+async function getBetaIntradayCandles(instrumentKey) {
+
+    const url =
+        "https://api.upstox.com/v3/historical-candle/intraday/" +
+        encodeURIComponent(instrumentKey) +
+        "/minutes/5";
+
+    return await betaApiRequest(url);
+}
+
+// ======================================================
 // VWAP
-// =====================================================
+// ======================================================
 
-function calculateVWAP(candles) {
+function calculateBetaVWAP(candles) {
 
-  let totalPV = 0;
+    let totalPV = 0;
+    let totalVolume = 0;
 
-  let totalVolume = 0;
+    for (const c of candles) {
 
-  for (const candle of candles) {
+        const high = Number(c[2]);
+        const low = Number(c[3]);
+        const close = Number(c[4]);
+        const volume = Number(c[5]);
 
-    const typicalPrice = (
+        if (
+            ![high, low, close, volume].every(Number.isFinite) ||
+            volume <= 0
+        ) continue;
 
-      candle.high +
+        const typicalPrice =
+            (high + low + close) / 3;
 
-      candle.low +
+        totalPV += typicalPrice * volume;
+        totalVolume += volume;
+    }
 
-      candle.close
-
-    ) / 3;
-
-    totalPV +=
-
-      typicalPrice * candle.volume;
-
-    totalVolume += candle.volume;
-
-  }
-
-  if (totalVolume <= 0) {
-
-    return null;
-
-  }
-
-  return totalPV / totalVolume;
-
+    return totalVolume > 0
+        ? totalPV / totalVolume
+        : null;
 }
 
-// =====================================================
-// VOLUME ANALYSIS
-// =====================================================
+// ======================================================
+// MOMENTUM ANALYSIS
+// ======================================================
 
-function calculateVolumeRatio(candles) {
+function analyseBetaMomentum(rawCandles, beta) {
 
-  if (candles.length < 21) {
+    const now = Date.now();
 
-    return 0;
+    const candles = rawCandles
+        .filter(c => {
+            const time = new Date(c[0]).getTime();
 
-  }
+            return Number.isFinite(time) &&
+                time + 300000 <= now;
+        })
+        .sort((a, b) =>
+            new Date(a[0]) - new Date(b[0])
+        );
 
-  const previous =
+    if (candles.length < 25) return null;
 
-    candles.slice(-21, -1);
+    const closes = candles.map(c => Number(c[4]));
 
-  const avgVolume = average(
+    const latest = candles[candles.length - 1];
+    const previous = candles[candles.length - 2];
 
-    previous.map(c => c.volume)
+    const close = Number(latest[4]);
+    const previousClose = Number(previous[4]);
 
-  );
+    const volume = Number(latest[5]);
 
-  const latest =
+    const previousVolumes = candles
+        .slice(-21, -1)
+        .map(c => Number(c[5]));
 
-    candles[candles.length - 1];
+    const averageVolume =
+        previousVolumes.reduce((a, b) => a + b, 0) /
+        previousVolumes.length;
 
-  if (avgVolume <= 0) {
+    if (
+        !Number.isFinite(averageVolume) ||
+        averageVolume <= 0
+    ) return null;
 
-    return 0;
+    const volumeRatio = volume / averageVolume;
 
-  }
+    const volumePass = volumeRatio >= 1.5;
 
-  return latest.volume / avgVolume;
+    const rsi = betaRSI(closes);
+    const ema = betaEMA(closes, 20);
+    const vwap = calculateBetaVWAP(candles);
 
+    if (
+        rsi === null ||
+        ema === null ||
+        vwap === null
+    ) return null;
+
+    const bullish =
+        beta >= 2.0 &&
+        close > ema &&
+        close > vwap &&
+        close > previousClose &&
+        rsi >= 65 &&
+        volumePass;
+
+    const bearish =
+        beta >= 2.0 &&
+        close < ema &&
+        close < vwap &&
+        close < previousClose &&
+        rsi <= 35 &&
+        volumePass;
+
+    let signal = "NO_SIGNAL";
+
+    if (bullish) {
+        signal = "VERY_STRONG_BUY";
+    } else if (bearish) {
+        signal = "VERY_STRONG_SELL";
+    }
+
+    return {
+        beta,
+        price: close,
+        rsi,
+        ema20: Number(ema.toFixed(2)),
+        vwap: Number(vwap.toFixed(2)),
+        volume,
+        averageVolume: Math.round(averageVolume),
+        volumeRatio: Number(volumeRatio.toFixed(2)),
+        signal,
+        candleTime: latest[0]
+    };
 }
 
-// =====================================================
-// PRICE MOMENTUM
-// =====================================================
+// ======================================================
+// SCANNER WORKER POOL
+// ======================================================
 
-function calculateMomentum(candles) {
+async function runBetaPool(
+    items,
+    worker,
+    concurrency = 3
+) {
 
-  if (candles.length < 3) {
+    const results = [];
 
-    return null;
+    let next = 0;
 
-  }
+    async function runWorker() {
 
-  const last =
-    candles[candles.length - 1];
+        while (next < items.length) {
 
-  const prev =
-    candles[candles.length - 2];
+            const index = next++;
 
-  const change =
+            try {
 
-    last.close - prev.close;
+                const result = await worker(items[index]);
 
-  const percentage =
+                if (result) results.push(result);
 
-    prev.close > 0
+            } catch (error) {
 
-      ? (change / prev.close) * 100
+                console.error(
+                    "BETA STOCK ERROR:",
+                    items[index].symbol,
+                    error.message
+                );
+            }
+        }
+    }
 
-      : 0;
-
-  return {
-
-    change,
-
-    percentage,
-
-    bullish: change > 0,
-
-    bearish: change < 0
-
-  };
-
-}
-
-// =====================================================
-// OPTIONS CONFIGURATION
-// =====================================================
-
-const OPTION_CONFIG = {
-
-  expiry: "current_week",
-
-  strikesEachSide: 2,
-
-  minPremium: 5,
-
-  minVolume: 1,
-
-  minOI: 1,
-
-  minScore: 4,
-
-  strongScore: 5,
-
-  rsiBullish: 65,
-
-  rsiBearish: 35,
-
-  volumeMultiplier: 2
-
-};
-
-// =====================================================
-// FUTURES INSTRUMENT KEYS
-// =====================================================
-
-const FUTURES_KEYS = {
-
-  NIFTY:
-    process.env.NIFTY_FUTURES_KEY || "",
-
-  BANKNIFTY:
-    process.env.BANKNIFTY_FUTURES_KEY || "",
-
-  SENSEX:
-    process.env.SENSEX_FUTURES_KEY || "",
-
-  FINNIFTY:
-    process.env.FINNIFTY_FUTURES_KEY || "",
-
-  MIDCPNIFTY:
-    process.env.MIDCPNIFTY_FUTURES_KEY || ""
-
-};
-
-// =====================================================
-// GET OPTION CHAIN
-// =====================================================
-
-async function getOptionChain(symbol) {
-
-  const config = INDEXES[symbol];
-
-  if (!config) {
-
-    throw new Error("Unknown index: " + symbol);
-
-  }
-
-  const params = new URLSearchParams({
-
-    instrument_key: config.key,
-
-    expiry_date: OPTION_CONFIG.expiry
-
-  });
-
-  const json = await upstoxGet(
-
-    `/v2/option/chain?${params.toString()}`
-
-  );
-
-  if (!Array.isArray(json.data)) {
-
-    throw new Error(
-      "Invalid option chain response"
+    await Promise.all(
+        Array.from(
+            { length: concurrency },
+            () => runWorker()
+        )
     );
 
-  }
-
-  return json.data;
-
+    return results;
 }
 
-// =====================================================
-// GET FUTURES DATA
-// =====================================================
+// ======================================================
+// MAIN SCANNER
+// ======================================================
 
-async function getFuturesData(symbol) {
+async function runBetaStrongMomentumScanner() {
 
-  const key = FUTURES_KEYS[symbol];
+    const stocks = await loadBetaFnoStocks();
 
-  if (!key) {
+    const results = await runBetaPool(
+        stocks,
 
-    return {
+        async stock => {
 
-      available: false,
+            const beta = await getCachedBeta(
+                stock.instrumentKey
+            );
 
-      reason: "Futures key not configured"
+            if (beta === null || beta < 2.0) {
+                return null;
+            }
 
-    };
+            const candles = await getBetaIntradayCandles(
+                stock.instrumentKey
+            );
 
-  }
+            const analysis = analyseBetaMomentum(
+                candles,
+                beta
+            );
 
-  try {
+            if (
+                !analysis ||
+                analysis.signal === "NO_SIGNAL"
+            ) {
+                return null;
+            }
 
-    const rows = await getCandles(key);
+            return {
+                symbol: stock.symbol,
+                instrumentKey: stock.instrumentKey,
+                ...analysis
+            };
+        },
 
-    const candles = completedCandles(rows);
+        3
+    );
 
-    if (candles.length < 2) {
-
-      return {
-
-        available: false,
-
-        reason: "Insufficient futures candles"
-
-      };
-
-    }
-
-    const last = candles[candles.length - 1];
-
-    const prev = candles[candles.length - 2];
-
-    const oiChange =
-
-      prev.oi > 0
-
-        ? ((last.oi - prev.oi) / prev.oi) * 100
-
-        : null;
-
-    return {
-
-      available: last.oi > 0 && prev.oi > 0,
-
-      lastOI: last.oi,
-
-      previousOI: prev.oi,
-
-      oiChangePct: oiChange,
-
-      priceChange:
-
-        last.close - prev.close,
-
-      longBuildUp:
-
-        oiChange !== null &&
-
-        oiChange > 0 &&
-
-        last.close > prev.close,
-
-      shortBuildUp:
-
-        oiChange !== null &&
-
-        oiChange > 0 &&
-
-        last.close < prev.close
-
-    };
-
-  } catch (error) {
+    results.sort(
+        (a, b) => b.volumeRatio - a.volumeRatio
+    );
 
     return {
-
-      available: false,
-
-      reason: error.message
-
+        status: "success",
+        scanner: "BETA_2.0_VERY_STRONG_MOMENTUM",
+        benchmark: "NIFTY 50",
+        timeframe: "5 MINUTES",
+        totalFnoStocks: stocks.length,
+        totalSignals: results.length,
+        signals: results,
+        updatedAt: new Date().toISOString()
     };
-
-  }
-
 }
 
-// =====================================================
-// OPTION CANDLE ANALYSIS
-// =====================================================
-
-function analyseOption(key, side, marketData) {
-
-  const candles = completedCandles(
-    marketData.candles
-  );
-
-  if (candles.length < MIN_CANDLES) {
-
-    return {
-
-      ready: false,
-
-      reason: "Insufficient option candles"
-
-    };
-
-  }
-
-  const closes = candles.map(c => c.close);
-
-  const last = candles[candles.length - 1];
-
-  const prev = candles[candles.length - 2];
-
-  const rsiValue = calculateRSI(closes, 14);
-
-  const emaValue = calculateEMA(closes, 20);
-
-  const currentVWAP = calculateVWAP(candles);
-
-  const previousVWAP = calculateVWAP(
-    candles.slice(0, -1)
-  );
-
-  const volumeRatio =
-    calculateVolumeRatio(candles);
-
-  const bullishCross =
-
-    currentVWAP !== null &&
-
-    previousVWAP !== null &&
-
-    last.close > currentVWAP &&
-
-    prev.close <= previousVWAP;
-
-  const bearishCross =
-
-    currentVWAP !== null &&
-
-    previousVWAP !== null &&
-
-    last.close < currentVWAP &&
-
-    prev.close >= previousVWAP;
-
-  const premiumRising =
-
-    last.close > prev.close;
-
-  const premiumFalling =
-
-    last.close < prev.close;
-
-  const bullishTrend =
-
-    emaValue !== null &&
-
-    last.close > emaValue;
-
-  const bearishTrend =
-
-    emaValue !== null &&
-
-    last.close < emaValue;
-
-  const bullishRSI =
-
-    rsiValue !== null &&
-
-    rsiValue >= OPTION_CONFIG.rsiBullish;
-
-  const bearishRSI =
-
-    rsiValue !== null &&
-
-    rsiValue <= OPTION_CONFIG.rsiBearish;
-
-  const volumePass =
-
-    volumeRatio >=
-    OPTION_CONFIG.volumeMultiplier;
-
-  const oi = marketData.oi || 0;
-
-  const previousOI =
-    marketData.prev_oi || 0;
-
-  const oiIncreasing =
-
-    oi > 0 &&
-
-    previousOI > 0 &&
-
-    oi > previousOI;
-
-  const oiChangePct =
-
-    previousOI > 0
-
-      ? ((oi - previousOI) / previousOI) * 100
-
-      : null;
-
-  let score = 0;
-
-  if (side === "CE") {
-
-    score += bullishRSI ? 1 : 0;
-
-    score += bullishTrend ? 1 : 0;
-
-    score += bullishCross ? 1 : 0;
-
-    score += volumePass ? 1 : 0;
-
-    score += premiumRising ? 1 : 0;
-
-    score += oiIncreasing ? 1 : 0;
-
-  } else {
-
-    score += bearishRSI ? 1 : 0;
-
-    score += bearishTrend ? 1 : 0;
-
-    score += bearishCross ? 1 : 0;
-
-    score += volumePass ? 1 : 0;
-
-    score += premiumRising ? 1 : 0;
-
-    score += oiIncreasing ? 1 : 0;
-
-  }
-
-  const signal =
-
-    score >= OPTION_CONFIG.strongScore
-
-      ? side === "CE"
-        ? "STRONG_CALL"
-        : "STRONG_PUT"
-
-      : score >= OPTION_CONFIG.minScore
-
-        ? side === "CE"
-          ? "CALL_WATCH"
-          : "PUT_WATCH"
-
-        : "WAIT";
-
-  return {
-
-    ready: true,
-
-    side,
-
-    instrumentKey: key,
-
-    signal,
-
-    score: `${score}/6`,
-
-    ltp: last.close,
-
-    rsi: Number(rsiValue.toFixed(2)),
-
-    ema20: Number(emaValue.toFixed(2)),
-
-    vwap: Number(currentVWAP.toFixed(2)),
-
-    volume: last.volume,
-
-    volumeRatio: Number(volumeRatio.toFixed(2)),
-
-    oi,
-
-    previousOI,
-
-    oiChangePct,
-
-    oiIncreasing,
-
-    vwapCross:
-
-      side === "CE"
-        ? bullishCross
-        : bearishCross,
-
-    premiumRising,
-
-    candleTime: last.time
-
-  };
-
-}
-
-// =====================================================
-// BUILD STRIKE LIST
-// =====================================================
-
-function selectStrikeRows(chain) {
-
-  if (!chain.length) {
-
-    return [];
-
-  }
-
-  const spot = Number(
-    chain[0].underlying_spot_price
-  );
-
-  if (!Number.isFinite(spot) || spot <= 0) {
-
-    return [];
-
-  }
-
-  const strikes = [
-
-    ...new Set(
-
-      chain
-
-        .map(x => Number(x.strike_price))
-
-        .filter(x => Number.isFinite(x) && x > 0)
-
-    )
-
-  ].sort((a, b) => a - b);
-
-  if (!strikes.length) return [];
-
-  let atmIndex = 0;
-
-  for (let i = 1; i < strikes.length; i++) {
+// ======================================================
+// API ROUTE
+// ======================================================
+
+async function handleBetaScannerRoute(req, res) {
+
+    const url = new URL(
+        req.url,
+        "http://localhost"
+    );
 
     if (
-
-      Math.abs(strikes[i] - spot) <
-
-      Math.abs(strikes[atmIndex] - spot)
-
+        req.method !== "GET" ||
+        url.pathname !== "/api/beta/strong-momentum"
     ) {
-
-      atmIndex = i;
-
-    }
-
-  }
-
-  const selected = strikes.slice(
-
-    Math.max(
-      0,
-      atmIndex - OPTION_CONFIG.strikesEachSide
-    ),
-
-    Math.min(
-
-      strikes.length,
-
-      atmIndex + OPTION_CONFIG.strikesEachSide + 1
-
-    )
-
-  );
-
-  return chain.filter(row =>
-
-    selected.includes(Number(row.strike_price))
-
-  );
-
-}
-
-// =====================================================
-// GET OPTION CANDIDATES
-// =====================================================
-
-async function analyseStrike(row, symbol) {
-
-  const results = [];
-
-  const spot = Number(
-    row.underlying_spot_price
-  );
-
-  const strike = Number(row.strike_price);
-
-  const options = [
-
-    {
-
-      side: "CE",
-
-      data: row.call_options
-
-    },
-
-    {
-
-      side: "PE",
-
-      data: row.put_options
-
-    }
-
-  ];
-
-  for (const item of options) {
-
-    const option = item.data;
-
-    if (!option?.instrument_key) continue;
-
-    const md = option.market_data || {};
-
-    const ltp = Number(md.ltp || 0);
-
-    const volume = Number(md.volume || 0);
-
-    const oi = Number(md.oi || 0);
-
-    const prevOI = Number(md.prev_oi || 0);
-
-    if (
-
-      ltp < OPTION_CONFIG.minPremium ||
-
-      volume < OPTION_CONFIG.minVolume ||
-
-      oi < OPTION_CONFIG.minOI
-
-    ) {
-
-      continue;
-
+        return false;
     }
 
     try {
 
-      const rows = await getCandles(
-        option.instrument_key
-      );
+        const result =
+            await runBetaStrongMomentumScanner();
 
-      const analysis = analyseOption(
+        res.writeHead(200, {
+            "Content-Type": "application/json",
+            "Access-Control-Allow-Origin": "*",
+            "Cache-Control": "no-store"
+        });
 
-        option.instrument_key,
-
-        item.side,
-
-        {
-
-          candles: rows,
-
-          oi,
-
-          prev_oi: prevOI
-
-        }
-
-      );
-
-      if (!analysis.ready) continue;
-
-      results.push({
-
-        index: symbol,
-
-        indexName: INDEXES[symbol].name,
-
-        spot,
-
-        strike,
-
-        expiry: row.expiry,
-
-        optionType: item.side,
-
-        instrumentKey: option.instrument_key,
-
-        tradingPremium: ltp,
-
-        optionVolume: volume,
-
-        optionOI: oi,
-
-        previousOI: prevOI,
-
-        ...analysis
-
-      });
+        res.end(JSON.stringify(result));
 
     } catch (error) {
 
-      results.push({
+        console.error("BETA SCANNER ERROR:", error);
 
-        index: symbol,
-
-        strike,
-
-        optionType: item.side,
-
-        status: "ERROR",
-
-        message: error.message
-
-      });
-
-    }
-
-  }
-
-  return results;
-
-}
-
-// =====================================================
-// SMART MONEY SCORE
-// =====================================================
-
-function finalSmartMoneyScore(option, futures) {
-
-  let score = Number(
-    String(option.score).split("/")[0]
-  );
-
-  if (futures.available) {
-
-    if (
-
-      option.optionType === "CE" &&
-
-      futures.longBuildUp
-
-    ) {
-
-      score += 1;
-
-    }
-
-    if (
-
-      option.optionType === "PE" &&
-
-      futures.shortBuildUp
-
-    ) {
-
-      score += 1;
-
-    }
-
-  }
-
-  return score;
-
-}
-
-// =====================================================
-// SCAN ONE INDEX
-// =====================================================
-
-async function scanOptionsIndex(symbol) {
-
-  const config = INDEXES[symbol];
-
-  const [chain, futures] = await Promise.all([
-
-    getOptionChain(symbol),
-
-    getFuturesData(symbol)
-
-  ]);
-
-  const selectedRows = selectStrikeRows(chain);
-
-  if (!selectedRows.length) {
-
-    return {
-
-      symbol,
-
-      status: "WAIT",
-
-      message: "No valid option chain strikes"
-
-    };
-
-  }
-
-  const candidates = [];
-
-  for (const row of selectedRows) {
-
-    const analysed = await analyseStrike(
-      row,
-      symbol
-    );
-
-    candidates.push(...analysed);
-
-  }
-
-  const valid = candidates.filter(
-    x => x.ready
-  );
-
-  const scored = valid.map(option => ({
-
-    ...option,
-
-    finalScore:
-      finalSmartMoneyScore(option, futures)
-
-  }));
-
-  scored.sort(
-
-    (a, b) => b.finalScore - a.finalScore
-
-  );
-
-  const bestCE = scored.find(
-    x => x.optionType === "CE"
-  ) || null;
-
-  const bestPE = scored.find(
-    x => x.optionType === "PE"
-  ) || null;
-
-  let selected = null;
-
-  let signal = "WAIT";
-
-  if (
-
-    bestCE &&
-
-    bestCE.finalScore >= OPTION_CONFIG.minScore &&
-
-    bestCE.finalScore >= (bestPE?.finalScore || 0)
-
-  ) {
-
-    selected = bestCE;
-
-    signal = "CALL_BIAS";
-
-  } else if (
-
-    bestPE &&
-
-    bestPE.finalScore >= OPTION_CONFIG.minScore
-
-  ) {
-
-    selected = bestPE;
-
-    signal = "PUT_BIAS";
-
-  }
-
-  return {
-
-    symbol,
-
-    name: config.name,
-
-    status: selected
-
-      ? selected.finalScore >= 6
-        ? "VERY_STRONG"
-        : "STRONG"
-
-      : "WAIT",
-
-    signal,
-
-    spot: chain[0].underlying_spot_price,
-
-    expiry: chain[0].expiry,
-
-    futures,
-
-    selectedStrike: selected
-      ? {
-
-          strike: selected.strike,
-
-          optionType: selected.optionType,
-
-          premium: selected.ltp,
-
-          rsi: selected.rsi,
-
-          ema20: selected.ema20,
-
-          vwap: selected.vwap,
-
-          volume: selected.optionVolume,
-
-          volumeRatio: selected.volumeRatio,
-
-          oi: selected.optionOI,
-
-          oiChangePct: selected.oiChangePct,
-
-          score: selected.finalScore,
-
-          instrumentKey: selected.instrumentKey,
-
-          reason: selected.signal
-
-        }
-
-      : null,
-
-    bestCE,
-
-    bestPE,
-
-    candidates: scored
-
-  };
-
-}
-
-// =====================================================
-// SCAN ALL FIVE INDICES
-// =====================================================
-
-async function runOptionsScanner() {
-
-  const output = await Promise.all(
-
-    Object.keys(INDEXES).map(async symbol => {
-
-      try {
-
-        return await scanOptionsIndex(symbol);
-
-      } catch (error) {
-
-        return {
-
-          symbol,
-
-          status: "ERROR",
-
-          signal: "DATA_ERROR",
-
-          message: error.message
-
-        };
-
-      }
-
-    })
-
-  );
-
-  return {
-
-    app: "SMART MONEY PRO SCANNER V3",
-
-    timestamp: new Date().toISOString(),
-
-    timeframe: "5 MINUTE",
-
-    indexes: output,
-
-    summary: {
-
-      strong: output.filter(
-
-        x => x.status === "STRONG" ||
-
-             x.status === "VERY_STRONG"
-
-      ).length,
-
-      bullish: output.filter(
-
-        x => x.signal === "CALL_BIAS"
-
-      ).length,
-
-      bearish: output.filter(
-
-        x => x.signal === "PUT_BIAS"
-
-      ).length,
-
-      wait: output.filter(
-
-        x => x.status === "WAIT"
-
-      ).length,
-
-      errors: output.filter(
-
-        x => x.status === "ERROR"
-
-      ).length
-
-    }
-
-  };
-
-}
-
-// =====================================================
-// HTTP SERVER
-// =====================================================
-
-const server = http.createServer(async (req, res) => {
-
-  if (req.method === "OPTIONS") {
-
-    res.writeHead(204, {
-
-      "Access-Control-Allow-Origin": "*"
-
-    });
-
-    return res.end();
-
-  }
-
-  const url = new URL(
-
-    req.url,
-
-    `http://${req.headers.host || "localhost"}`
-
-  );
-
-  try {
-
-    // HEALTH
-
-    if (url.pathname === "/health") {
-
-      return send(res, 200, {
-
-        ok: true,
-
-        app: "SMART MONEY PRO SCANNER V3",
-
-        node: process.version,
-
-        tokenConfigured: Boolean(TOKEN),
-
-        indexes: Object.keys(INDEXES)
-
-      });
-
-    }
-
-    // INDEX CONFIG
-
-    if (url.pathname === "/api/scanner/config") {
-
-      return send(res, 200, {
-
-        indexes: Object.keys(INDEXES),
-
-        timeframe: "5m",
-
-        rsiBullish: 65,
-
-        rsiBearish: 35,
-
-        volumeMultiplier: 2,
-
-        expiry: OPTION_CONFIG.expiry
-
-      });
-
-    }
-
-    // OPTIONS SCANNER
-
-    if (url.pathname === "/api/options/scan") {
-
-      const result = await runOptionsScanner();
-
-      return send(res, 200, result);
-
-    }
-
-    // ONE INDEX SCAN
-
-    if (url.pathname === "/api/options/scan/index") {
-
-      const symbol = (
-
-        url.searchParams.get("symbol") || ""
-
-      ).toUpperCase();
-
-      if (!INDEXES[symbol]) {
-
-        return send(res, 400, {
-
-          error: "Invalid index symbol"
-
+        res.writeHead(500, {
+            "Content-Type": "application/json"
         });
 
-      }
-
-      const result =
-        await scanOptionsIndex(symbol);
-
-      return send(res, 200, result);
-
+        res.end(JSON.stringify({
+            status: "error",
+            message: error.message
+        }));
     }
 
-    // OPTION CHAIN
-
-    if (url.pathname === "/api/options/chain") {
-
-      const symbol = (
-
-        url.searchParams.get("symbol") || "NIFTY"
-
-      ).toUpperCase();
-
-      if (!INDEXES[symbol]) {
-
-        return send(res, 400, {
-
-          error: "Invalid index"
-
-        });
-
-      }
-
-      const chain = await getOptionChain(symbol);
-
-      return send(res, 200, {
-
-        symbol,
-
-        expiry: chain[0]?.expiry || null,
-
-        count: chain.length,
-
-        data: chain
-
-      });
-
-    }
-
-    // INDEX CANDLES
-
-    if (url.pathname === "/api/index/candles") {
-
-      const symbol = (
-
-        url.searchParams.get("symbol") || "NIFTY"
-
-      ).toUpperCase();
-
-      if (!INDEXES[symbol]) {
-
-        return send(res, 400, {
-
-          error: "Invalid index"
-
-        });
-
-      }
-
-      const rows = await getCandles(
-
-        INDEXES[symbol].key
-
-      );
-
-      const candles = completedCandles(rows);
-
-      return send(res, 200, {
-
-        symbol,
-
-        instrumentKey: INDEXES[symbol].key,
-
-        rawCandles: rows.length,
-
-        completedCandles: candles.length,
-
-        candles
-
-      });
-
-    }
-
-    // FUTURES STATUS
-
-    if (url.pathname === "/api/futures/status") {
-
-      const output = {};
-
-      for (const symbol of Object.keys(INDEXES)) {
-
-        output[symbol] =
-          await getFuturesData(symbol);
-
-      }
-
-      return send(res, 200, output);
-
-    }
-
-    return send(res, 404, {
-
-      error: "Route not found"
-
-    });
-
-  } catch (error) {
-
-    console.error(
-
-      "API ERROR:",
-
-      error.message
-
-    );
-
-    return send(
-
-      res,
-
-      error.status || 500,
-
-      {
-
-        error: error.message,
-
-        details: error.details || undefined
-
-      }
-
-    );
-
-  }
-
-});
-
-// =====================================================
-// START SERVER
-// =====================================================
-
-server.listen(PORT, "0.0.0.0", () => {
-
-  console.log(
-
-    "SMART MONEY PRO SCANNER V3 RUNNING"
-
-  );
-
-  console.log(
-
-    "Port:", PORT
-
-  );
-
-  console.log(
-
-    "Token configured:", Boolean(TOKEN)
-
-  );
-
-});
+    return true;
+}
+
+console.log(
+    "SMART TRADE INDIA BETA 2.0 PART 2 LOADED"
+);
