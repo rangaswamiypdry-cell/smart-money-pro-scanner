@@ -1,1 +1,12 @@
-
+{
+  "name": "smart-money-pro-scanner",
+  "version": "1.0.0",
+  "description": "Smart Money Pro Index Scanner",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
