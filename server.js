@@ -223,12 +223,6 @@ function betaEMA(values, period = 20) {
 }
 
 console.log(
-    // ======================================================
-// SMART TRADE INDIA
-// BETA 2.0 VERY STRONG MOMENTUM SCANNER
-// PART 2 FULL CODE
-// NSE F&O + UPSTOX V3
-// ======================================================
 
 const betaZlib = require("zlib");
 
