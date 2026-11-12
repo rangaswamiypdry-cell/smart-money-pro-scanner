@@ -341,49 +341,61 @@ async function loadIndexMaster() {
 }
 
 // ==============================================
-// GET 5 MINUTE FUTURES CANDLES
+// UPSTOX INTRADAY CANDLE V3
 // ==============================================
 
 async function getIndexCandles(instrumentKey) {
 
-    const key = encodeURIComponent(
-        instrumentKey
-    );
+if (!instrumentKey) {  
+    throw new Error("INSTRUMENT_KEY_MISSING");  
+}  
 
-    const result = await upstoxGET(
+const key = encodeURIComponent(instrumentKey);  
 
-        `/v3/historical-candle/intraday/${key}/minutes/5`
+const path =  
+    `/v3/historical-candle/intraday/${key}/minutes/5`;  
 
-    );
+const result = await upstoxGET(path);  
 
-    const raw = result?.data?.candles || [];
+if (result.status !== "success") {  
+    throw new Error("CANDLE_API_FAILED");  
+}  
 
-    const now = Date.now();
+const raw = result?.data?.candles || [];  
 
-    return raw.map(c => ({
+const now = Date.now();  
 
-        time: new Date(c[0]).getTime(),
+return raw.map(c => ({  
 
-        open: Number(c[1]),
+    time: new Date(c[0]).getTime(),  
 
-        high: Number(c[2]),
+    open: Number(c[1]),  
 
-        low: Number(c[3]),
+    high: Number(c[2]),  
 
-        close: Number(c[4]),
+    low: Number(c[3]),  
 
-        volume: Number(c[5] || 0),
+    close: Number(c[4]),  
 
-        oi: Number(c[6] || 0)
+    volume: Number(c[5] || 0),  
 
-    })).filter(c =>
+    oi: Number(c[6] || 0)  
 
-        Number.isFinite(c.time) &&
+}))  
 
-        c.time + 5 * 60 * 1000 <= now
+.filter(c =>  
 
-    ).sort((a, b) => a.time - b.time);
-}
+    Number.isFinite(c.time) &&  
+
+    c.close > 0 &&  
+
+    c.time + 300000 <= now  
+
+)  
+
+.sort((a, b) => a.time - b.time);
+
+} 
 
 // ==============================================
 // RSI CALCULATION
