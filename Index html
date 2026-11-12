@@ -4,302 +4,1060 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#08111f">
-<title>SMART TRADE INDIA V8 PRO</title>
+<title>SMART TRADE INDIA - INDEX SELL PRO</title>
+
 <style>
 :root{
---bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263a55;
---text:#edf4ff;--muted:#91a4bd;--green:#19c784;--red:#ff5d70;
---amber:#f5b942;--blue:#55a7ff;
+  --bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263a55;
+  --text:#edf4ff;--muted:#91a4bd;--green:#19c784;--red:#ff5d70;
+  --amber:#f5b942;--blue:#55a7ff;
 }
+
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 15% 0%,#142846 0,#08111f 42%);color:var(--text);font:14px/1.45 system-ui,Arial,sans-serif}
+
+body{
+  margin:0;
+  background:radial-gradient(circle at 15% 0%,#142846 0,#08111f 42%);
+  color:var(--text);
+  font:14px/1.45 system-ui,Arial,sans-serif;
+}
+
 .wrap{max-width:1250px;margin:auto;padding:16px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 18px}
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
+  margin:8px 0 18px;
+}
+
 .brand{display:flex;align-items:center;gap:11px}
-.logo{width:42px;height:42px;border-radius:13px;background:linear-gradient(135deg,#1686ff,#19c784);display:grid;place-items:center;font-weight:900;color:#061321;font-size:19px}
+
+.logo{
+  width:44px;height:44px;
+  border-radius:13px;
+  background:linear-gradient(135deg,#1686ff,#19c784);
+  display:grid;place-items:center;
+  font-weight:900;color:#061321;font-size:19px;
+}
+
 .brand h1{font-size:18px;margin:0}
-.sub{color:var(--muted);font-size:12px}
+
+.sub,.small{color:var(--muted);font-size:12px}
+
 .actions{display:flex;gap:8px;flex-wrap:wrap}
-button{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--panel2);color:var(--text);font-weight:650;cursor:pointer}
+
+button{
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 13px;
+  background:var(--panel2);
+  color:var(--text);
+  font-weight:650;
+  cursor:pointer;
+}
+
 button.primary{background:#1678e8;border-color:#1678e8}
-button:disabled{opacity:.55}
-.statusbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#0d1a2b;border:1px solid var(--line);padding:10px 12px;border-radius:12px;margin-bottom:14px;color:var(--muted);font-size:12px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block}
-.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}
-.grid{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px;margin:12px 0}
-.metric,.panel{background:linear-gradient(180deg,#122139,#0e1a2b);border:1px solid var(--line);border-radius:14px}
-.metric{padding:13px}.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase}
-.metric .value{font-size:24px;font-weight:800;margin-top:5px}
-.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}
+
+button:disabled{opacity:.55;cursor:wait}
+
+.statusbar{
+  display:flex;
+  align-items:center;
+  gap:9px;
+  flex-wrap:wrap;
+  background:#0d1a2b;
+  border:1px solid var(--line);
+  padding:11px 12px;
+  border-radius:12px;
+  margin-bottom:14px;
+  color:var(--muted);
+  font-size:12px;
+}
+
+.dot{
+  width:8px;height:8px;
+  border-radius:50%;
+  background:var(--amber);
+  display:inline-block;
+}
+
+.dot.ok{background:var(--green)}
+.dot.bad{background:var(--red)}
+
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:10px;
+  margin:12px 0;
+}
+
+.metric,.panel{
+  background:linear-gradient(180deg,#122139,#0e1a2b);
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+
+.metric{padding:14px}
+
+.metric .label{
+  color:var(--muted);
+  font-size:11px;
+  text-transform:uppercase;
+}
+
+.metric .value{
+  font-size:25px;
+  font-weight:800;
+  margin-top:5px;
+}
+
+.green{color:var(--green)}
+.red{color:var(--red)}
+.amber{color:var(--amber)}
+.blue{color:var(--blue)}
+
 .panel{padding:14px;margin-top:13px}
-.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+
+.panelhead{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  margin-bottom:12px;
+}
+
 .panel h2{font-size:15px;margin:0}
-.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:4px}
-.tab{white-space:nowrap;font-size:12px;padding:8px 11px}
-.tab.active{background:#1b4774;border-color:#3979b5}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.stock{background:#0b1727;border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}
-.stocktop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+
+.tabs{
+  display:flex;
+  gap:7px;
+  overflow:auto;
+  padding-bottom:4px;
+}
+
+.tab{
+  white-space:nowrap;
+  font-size:12px;
+  padding:8px 11px;
+}
+
+.tab.active{
+  background:#1b4774;
+  border-color:#3979b5;
+}
+
+.cards{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:10px;
+}
+
+.stock{
+  background:#0b1727;
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:13px;
+  min-width:0;
+}
+
+.stocktop{
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  align-items:center;
+}
+
 .symbol{font-weight:850;font-size:16px}
-.badge{font-size:10px;font-weight:800;border-radius:20px;padding:4px 8px;background:#27364a}
-.badge.buy{background:#0c4737;color:#6ff0bc}.badge.sell{background:#542331;color:#ff9baa}.badge.wait{background:#493b1b;color:#ffd77d}
-.data{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-top:12px}
-.datum{background:#111f32;border-radius:8px;padding:7px}
-.datum small{display:block;color:var(--muted);font-size:10px}
+
+.badge{
+  font-size:10px;
+  font-weight:800;
+  border-radius:20px;
+  padding:4px 8px;
+  background:#27364a;
+}
+
+.badge.buy{background:#0c4737;color:#6ff0bc}
+.badge.sell{background:#542331;color:#ff9baa}
+.badge.wait{background:#493b1b;color:#ffd77d}
+
+.data{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+
+.datum{
+  background:#111f32;
+  border-radius:8px;
+  padding:8px;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.datum small{
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
 .datum b{font-size:12px}
-.option{margin-top:10px;padding:10px;border:1px solid #315b80;background:#10263a;border-radius:9px}
+
+.empty{
+  padding:25px 12px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed var(--line);
+  border-radius:12px;
+  grid-column:1/-1;
+}
+
+.error{
+  color:#ff9baa;
+  background:#351d29;
+  border:1px solid #6b3342;
+  padding:10px;
+  border-radius:10px;
+  overflow-wrap:anywhere;
+}
+
+.note{
+  padding:10px 12px;
+  border-radius:10px;
+  background:#10263a;
+  border:1px solid #315b80;
+  color:#b9d8f5;
+  font-size:12px;
+}
+
+.footer{
+  color:var(--muted);
+  font-size:11px;
+  text-align:center;
+  padding:20px 5px;
+}
+
+.option{
+  margin-top:10px;
+  padding:10px;
+  border:1px solid #315b80;
+  background:#10263a;
+  border-radius:9px;
+}
+
 .option strong{color:#8dc8ff}
-.optiongrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:7px;margin-top:7px}
-.empty{padding:25px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
-.error{color:#ff9baa;background:#351d29;border:1px solid #6b3342;padding:10px;border-radius:10px;overflow-wrap:anywhere}
-.footer{color:var(--muted);font-size:11px;text-align:center;padding:20px 5px}
-.small{font-size:11px;color:var(--muted)}
-@media(max-width:850px){.grid{grid-template-columns:repeat(3,1fr)}}
-@media(max-width:560px){.wrap{padding:11px}.grid{grid-template-columns:repeat(2,1fr)}.cards{grid-template-columns:1fr}.data{grid-template-columns:repeat(2,1fr)}.brand h1{font-size:16px}.metric .value{font-size:21px}}
+
+@media(max-width:800px){
+  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:560px){
+  .wrap{padding:11px}
+  .cards{grid-template-columns:1fr}
+  .data{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .brand h1{font-size:16px}
+  .metric .value{font-size:22px}
+}
 </style>
 </head>
+
 <body>
+
 <div class="wrap">
+
 <header class="top">
-<div class="brand"><div class="logo">ST</div><div><h1>SMART TRADE INDIA V8 PRO</h1><div class="sub">NSE F&amp;O • ORB + VOLUME + OI + RSI + VWAP</div></div></div>
+
+<div class="brand">
+<div class="logo">ST</div>
+
+<div>
+<h1>SMART TRADE INDIA INDEX SELL PRO</h1>
+<div class="sub">
+INDEX OPTIONS • LIVE BACKEND • CLOSED 5-MINUTE DATA
+</div>
+</div>
+
+</div>
+
 <div class="actions">
-<button id="scanBtn" class="primary" onclick="runScan(true)">↻ Scan Now</button>
-<button id="masterBtn" onclick="refreshMaster()">⟳ Refresh F&amp;O List</button>
+
+<button id="scanBtn" class="primary"
+onclick="runScan(true)">
+↻ Scan Now
+</button>
+
+<button id="masterBtn"
+onclick="refreshMaster()">
+⟳ Check Master Status
+</button>
+
 </div>
 </header>
+
 <div class="statusbar">
-<span id="healthDot" class="dot"></span><b id="healthText">Checking backend…</b><span>•</span>
-<span id="marketText">Market status: —</span><span>•</span>
-<span id="updatedText">Last update: —</span><span>•</span><span>Auto refresh: 30 sec</span>
+
+<span id="healthDot" class="dot"></span>
+
+<b id="healthText">Checking backend…</b>
+
+<span>•</span>
+
+<span id="marketText">Market time: —</span>
+
+<span>•</span>
+
+<span id="updatedText">Last update: —</span>
+
+<span>•</span>
+
+<span>Auto refresh: 30 sec</span>
+
 </div>
+
 <section class="grid">
-<div class="metric"><div class="label">Stocks Scanned</div><div class="value" id="mScanned">—</div></div>
-<div class="metric"><div class="label">Strong Buy</div><div class="value green" id="mBuy">—</div></div>
-<div class="metric"><div class="label">Strong Sell</div><div class="value red" id="mSell">—</div></div>
-<div class="metric"><div class="label">Long Buildup</div><div class="value green" id="mLong">—</div></div>
-<div class="metric"><div class="label">Short Buildup</div><div class="value red" id="mShort">—</div></div>
-<div class="metric"><div class="label">Waiting / Errors</div><div class="value amber" id="mWait">—</div></div>
+
+<div class="metric">
+<div class="label">Signals Returned</div>
+<div class="value blue" id="mTotal">—</div>
+</div>
+
+<div class="metric">
+<div class="label">Sell Signals</div>
+<div class="value red" id="mSell">—</div>
+</div>
+
+<div class="metric">
+<div class="label">Buy Signals</div>
+<div class="value green" id="mBuy">—</div>
+</div>
+
+<div class="metric">
+<div class="label">Master Loaded</div>
+<div class="value amber" id="mMaster">—</div>
+</div>
+
 </section>
+
 <section class="panel">
-<div class="panelhead"><h2>Market Signals</h2><span class="small" id="scanInfo">Waiting for first scan</span></div>
+
+<div class="panelhead">
+
+<h2>Index Market Signals</h2>
+
+<span class="small" id="scanInfo">
+Waiting for first scan
+</span>
+
+</div>
+
 <div class="tabs">
-<button class="tab active" data-view="buy">🟢 Strong Buy</button>
-<button class="tab" data-view="sell">🔴 Strong Sell</button>
-<button class="tab" data-view="long">Long Buildup</button>
-<button class="tab" data-view="short">Short Buildup</button>
-<button class="tab" data-view="all">All Stocks</button>
-<button class="tab" data-view="errors">Errors</button>
+
+<button class="tab active" data-view="all">
+All Signals
+</button>
+
+<button class="tab" data-view="sell">
+Sell
+</button>
+
+<button class="tab" data-view="buy">
+Buy
+</button>
+
+<button class="tab" data-view="other">
+Other / Waiting
+</button>
+
 </div>
+
 <div id="message" style="margin:12px 0"></div>
-<div id="results" class="cards"><div class="empty">Tap Scan Now to load market results.</div></div>
-</section>
-<section class="panel">
-<div class="panelhead"><h2>System Notes</h2></div>
-<div class="small">• Completed 5-minute candles only.</div>
-<div class="small">• ORB + Volume + Futures OI + RSI + VWAP confirmation.</div>
-<div class="small">• CE/PE details displayed when valid option data is returned.</div>
-<div class="small">• No automatic orders are placed.</div>
-</section>
-<div class="footer">SMART TRADE INDIA V8 PRO</div>
+
+<div id="results" class="cards">
+
+<div class="empty">
+Tap Scan Now to request the latest index scanner result.
 </div>
+
+</div>
+
+</section>
+
+<section class="panel">
+
+<div class="panelhead">
+<h2>Backend Information</h2>
+</div>
+
+<div class="note">
+This page calls your existing server routes:
+<b>/health</b>,
+<b>/api/status</b> and
+<b>/api/index-sell-scan</b>.
+
+It does not place orders. Signals are informational and are not guaranteed trading outcomes.
+</div>
+
+<div class="small" style="margin-top:10px">
+Backend: smart-money-pro-scanner.onrender.com
+</div>
+
+</section>
+
+<div class="footer">
+SMART TRADE INDIA • INDEX SELL PRO
+</div>
+
+</div>
+
 <script>
+
 "use strict";
 
-// Render backend URL
-const API_BASE = "https://smart-money-pro-scanner.onrender.com";
+// RENDER BACKEND URL
+const API_BASE =
+"https://smart-money-pro-scanner.onrender.com";
 
+// YOUR SERVER.JS API ROUTES
 const API = {
   health: "/health",
-  scan: "/api/scan?force=true",
-  master: "/api/master/refresh"
+  status: "/api/status",
+  scan: "/api/index-sell-scan?force=true",
+  scanNormal: "/api/index-sell-scan"
 };
 
-let latest = null;
-let activeView = "buy";
+let latestData = null;
+let activeView = "all";
 let busy = false;
 
 const $ = id => document.getElementById(id);
 
 function esc(value) {
-  return String(value ?? "—").replace(/[&<>"']/g, c => ({
-    "&":"&amp;", "<":"&lt;", ">":"&gt;", '"':"&quot;", "'":"&#39;"
-  }[c]));
+
+  return String(value ?? "—").replace(
+    /[&<>"']/g,
+    ch => ({
+      "&":"&amp;",
+      "<":"&lt;",
+      ">":"&gt;",
+      '"':"&quot;",
+      "'":"&#39;"
+    }[ch])
+  );
+
 }
 
 function fmt(value) {
-  if (value === null || value === undefined || value === "") return "—";
+
+  if (
+    value === null ||
+    value === undefined ||
+    value === ""
+  ) return "—";
+
+  if (
+    typeof value === "string" &&
+    !Number.isFinite(Number(value))
+  ) return esc(value);
+
   const n = Number(value);
-  return Number.isFinite(n) ? n.toLocaleString("en-IN", {maximumFractionDigits:2}) : esc(value);
+
+  return Number.isFinite(n)
+    ? n.toLocaleString("en-IN", {
+        maximumFractionDigits:2
+      })
+    : esc(value);
+
 }
 
 async function api(path, timeout=90000) {
+
   const controller = new AbortController();
-  const timer = setTimeout(() => controller.abort(), timeout);
+
+  const timer = setTimeout(
+    () => controller.abort(),
+    timeout
+  );
+
   try {
-    const response = await fetch(API_BASE + path, {
-      method:"GET", cache:"no-store", signal:controller.signal
-    });
-    const data = await response.json().catch(() => ({message:"Server returned invalid JSON"}));
-    if (!response.ok) throw new Error(data.message || data.error || `HTTP ${response.status}`);
+
+    const response = await fetch(
+      API_BASE + path,
+      {
+        method:"GET",
+        cache:"no-store",
+        signal:controller.signal
+      }
+    );
+
+    const data = await response.json().catch(
+      () => ({
+        message:"Server returned invalid JSON"
+      })
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        data.message ||
+        data.error ||
+        `HTTP ${response.status}`
+      );
+    }
+
+    if (data && data.status === "ERROR") {
+      throw new Error(
+        data.message || "Backend returned ERROR"
+      );
+    }
+
     return data;
+
   } finally {
+
     clearTimeout(timer);
+
   }
-}function setHealth(ok, text) {
-  $("healthDot").className = "dot " + (ok ? "ok" : "bad");
+
+}function setHealth(ok,text) {
+
+  $("healthDot").className =
+    "dot " + (ok ? "ok" : "bad");
+
   $("healthText").textContent = text;
+
 }
 
 async function checkHealth() {
+
   try {
+
     const h = await api(API.health,25000);
-    const token = h.tokenConfigured === true ? " • Upstox token configured" : "";
-    setHealth(true,"Backend LIVE"+token);
-  } catch(e) {
-    setHealth(false,"Backend check failed: "+e.message);
+
+    const tokenText =
+      h.tokenConfigured === true
+      ? " • Upstox token configured"
+      : "";
+
+    setHealth(
+      true,
+      "Backend LIVE"+tokenText
+    );
+
+    if (h.marketTime) {
+      $("marketText").textContent =
+        "Market time: " + h.marketTime;
+    }
+
+  } catch(err) {
+
+    setHealth(
+      false,
+      "Backend check failed: " + err.message
+    );
+
   }
+
+}
+
+function getSignals(data) {
+
+  if (!data) return [];
+
+  if (Array.isArray(data.signals)) {
+    return data.signals;
+  }
+
+  if (Array.isArray(data.data?.signals)) {
+    return data.data.signals;
+  }
+
+  if (Array.isArray(data.results)) {
+    return data.results;
+  }
+
+  return [];
+
+}
+
+function signalText(item) {
+
+  return String(
+    item.signal ||
+    item.signalType ||
+    item.action ||
+    item.direction ||
+    item.type ||
+    item.optionType ||
+    item.classification ||
+    ""
+  ).toUpperCase();
+
+}
+
+function classify(item) {
+
+  const s = signalText(item);
+
+  if (
+    s.includes("SELL") ||
+    s.includes("PE") ||
+    s.includes("BEAR")
+  ) return "sell";
+
+  if (
+    s.includes("BUY") ||
+    s.includes("CE") ||
+    s.includes("BULL")
+  ) return "buy";
+
+  return "other";
+
+}
+
+function filteredSignals() {
+
+  const signals = getSignals(latestData);
+
+  if (activeView === "all") {
+    return signals;
+  }
+
+  return signals.filter(
+    item => classify(item) === activeView
+  );
+
+}
+
+function renderSummary(data) {
+
+  const signals = getSignals(data);
+
+  const sellCount = signals.filter(
+    x => classify(x) === "sell"
+  ).length;
+
+  const buyCount = signals.filter(
+    x => classify(x) === "buy"
+  ).length;
+
+  $("mTotal").textContent = fmt(
+    data.totalSignals ??
+    data.count ??
+    signals.length
+  );
+
+  $("mSell").textContent = fmt(
+    data.strongSellCount ??
+    data.sellCount ??
+    sellCount
+  );
+
+  $("mBuy").textContent = fmt(
+    data.strongBuyCount ??
+    data.buyCount ??
+    buyCount
+  );
+
+  $("mMaster").textContent =
+    data.masterLoaded === true
+    ? "YES"
+    : data.masterLoaded === false
+    ? "NO"
+    : "—";
+
+}
+
+function firstValue(item,keys) {
+
+  for (const key of keys) {
+
+    if (
+      item[key] !== undefined &&
+      item[key] !== null &&
+      item[key] !== ""
+    ) {
+      return item[key];
+    }
+
+  }
+
+  return "—";
+
+}
+
+function signalCard(item) {
+
+  const kind = classify(item);
+
+  const badgeClass =
+    kind === "sell"
+    ? "sell"
+    : kind === "buy"
+    ? "buy"
+    : "wait";
+
+  const label = firstValue(
+    item,
+    [
+      "signal",
+      "signalType",
+      "action",
+      "direction",
+      "type",
+      "classification"
+    ]
+  );
+
+  const symbol = firstValue(
+    item,
+    [
+      "symbol",
+      "tradingSymbol",
+      "name",
+      "index",
+      "underlying",
+      "instrument"
+    ]
+  );
+
+  const fields = [
+
+    ["Price",[
+      "price",
+      "ltp",
+      "lastPrice",
+      "underlyingPrice"
+    ]],
+
+    ["Change %",[
+      "changePercent",
+      "priceChangePercent",
+      "change_pct"
+    ]],
+
+    ["Strike",[
+      "strikePrice",
+      "strike",
+      "strike_price"
+    ]],
+
+    ["Option",[
+      "optionType",
+      "instrumentType",
+      "right",
+      "cePe"
+    ]],
+
+    ["Expiry",[
+      "expiry",
+      "expiryDate"
+    ]],
+
+    ["Premium",[
+      "premium",
+      "optionLtp",
+      "optionPrice"
+    ]],
+
+    ["RSI",[
+      "rsi",
+      "rsi14"
+    ]],
+
+    ["VWAP",[
+      "vwap"
+    ]],
+
+    ["Volume",[
+      "volume",
+      "totalVolume"
+    ]],
+
+    ["OI",[
+      "oi",
+      "openInterest",
+      "open_interest"
+    ]],
+
+    ["OI Change %",[
+      "oiChangePercent",
+      "oiChangePct",
+      "oi_change_percent"
+    ]],
+
+    ["Signal Time",[
+      "signalTime",
+      "candleTime",
+      "timestamp",
+      "time"
+    ]]
+
+  ];
+
+  let cells = fields.map(
+    ([title,keys]) => {
+
+      const value = firstValue(item,keys);
+
+      if (value === "—") return "";
+
+      return `
+        <div class="datum">
+          <small>${esc(title)}</small>
+          <b>${esc(value)}</b>
+        </div>
+      `;
+
+    }
+  ).join("");
+
+  const reason = firstValue(
+    item,
+    [
+      "reason",
+      "message",
+      "description",
+      "confirmation"
+    ]
+  );
+
+  return `
+
+  <article class="stock">
+
+    <div class="stocktop">
+
+      <div class="symbol">
+        ${esc(symbol)}
+      </div>
+
+      <span class="badge ${badgeClass}">
+        ${esc(label === "—" ? kind.toUpperCase() : label)}
+      </span>
+
+    </div>
+
+    ${
+      reason !== "—"
+      ? `<div class="small" style="margin-top:6px">
+          ${esc(reason)}
+        </div>`
+      : ""
+    }
+
+    <div class="data">
+
+      ${
+        cells ||
+        '<div class="small">Signal received; no additional fields supplied by API.</div>'
+      }
+
+    </div>
+
+    ${
+      item.option && typeof item.option === "object"
+      ? `
+        <div class="option">
+          <strong>Option details</strong>
+          <div class="small">
+            ${esc(JSON.stringify(item.option))}
+          </div>
+        </div>
+      `
+      : ""
+    }
+
+  </article>
+
+  `;
+
+}
+
+function renderSignals() {
+
+  document.querySelectorAll(".tab").forEach(
+    btn => {
+
+      btn.classList.toggle(
+        "active",
+        btn.dataset.view === activeView
+      );
+
+    }
+  );
+
+  const signals = filteredSignals();
+
+  $("results").innerHTML = signals.length
+
+    ? signals.map(signalCard).join("")
+
+    : `
+      <div class="empty">
+        No ${esc(activeView)} signals returned in the latest scan.
+      </div>
+    `;
+
 }
 
 function setBusy(on) {
+
   busy = on;
+
   $("scanBtn").disabled = on;
-  $("scanBtn").textContent = on ? "Scanning…" : "↻ Scan Now";
+
+  $("scanBtn").textContent =
+    on ? "Scanning…" : "↻ Scan Now";
+
 }
 
-async function runScan(force=false) {
+async function runScan(force=true) {
+
   if (busy) return;
+
   setBusy(true);
+
   $("message").innerHTML = "";
+
   try {
-    const path = force ? API.scan : "/api/scan";
-    const data = await api(path,120000);
-    latest = data;
+
+    const data = await api(
+      force ? API.scan : API.scanNormal,
+      120000
+    );
+
+    latestData = data;
+
     renderSummary(data);
-    renderView();
-    $("updatedText").textContent = "Last update: " + (data.marketTime || new Date(data.updatedAt || Date.now()).toLocaleTimeString("en-IN"));
-    $("marketText").textContent = "Market time: " + (data.marketTime || "—");
-    $("scanInfo").textContent = `${data.scanned ?? 0} stocks checked • ${data.timeframe || "5 MINUTES"} • ${data.status || "—"}`;
+
+    renderSignals();
+
+    const nowText =
+      data.marketTime ||
+      data.updatedAt ||
+      new Date().toLocaleTimeString("en-IN");
+
+    $("updatedText").textContent =
+      "Last update: " + nowText;
+
+    $("marketText").textContent =
+      "Market time: " + (data.marketTime || "—");
+
+    $("scanInfo").textContent =
+      `${data.totalSignals ?? getSignals(data).length} signals • ${data.status || "Response received"} • ${data.scanner || "Index scanner"}`;
+
     if (data.status === "WAITING") {
-      $("message").innerHTML = '<div class="empty">Waiting for 09:30 ORB completion.</div>';
-    } else if (data.status !== "SUCCESS") {
-      $("message").innerHTML = `<div class="error">${esc(data.message || "Scanner error")}</div>`;
+
+      $("message").innerHTML =
+        '<div class="note">Scanner is waiting for its required market data or candle confirmation.</div>';
+
+    } else if (data.message) {
+
+      $("message").innerHTML =
+        `<div class="note">${esc(data.message)}</div>`;
+
     }
-  } catch(e) {
-    $("message").innerHTML = `<div class="error">Scanner API error: ${esc(e.message)}<br>Check Render backend and API route.</div>`;
-    $("results").innerHTML = '<div class="empty">No scan data loaded.</div>';
+
+  } catch(err) {
+
+    $("message").innerHTML =
+      `<div class="error">Scanner API error: ${esc(err.message)}</div>`;
+
+    $("results").innerHTML =
+      '<div class="empty">No scanner data loaded. Check the backend response.</div>';
+
   } finally {
+
     setBusy(false);
+
   }
-}
 
-function arr(data,key,alt) {
-  const x = data?.[key];
-  if (Array.isArray(x)) return x;
-  const y = data?.[alt];
-  return Array.isArray(y) ? y : [];
 }
-
-function renderSummary(d) {
-  $("mScanned").textContent = fmt(d.scanned);
-  $("mBuy").textContent = fmt(d.strongBuyCount ?? d.bullishCount ?? arr(d,"strongBuy","bullish").length);
-  $("mSell").textContent = fmt(d.strongSellCount ?? d.bearishCount ?? arr(d,"strongSell","bearish").length);
-  $("mLong").textContent = fmt(d.longBuildupCount ?? arr(d,"longBuildup").length);
-  $("mShort").textContent = fmt(d.shortBuildupCount ?? arr(d,"shortBuildup").length);
-  $("mWait").textContent = `${fmt(d.waitingCount ?? arr(d,"waiting").length)} / ${fmt(d.errorCount ?? arr(d,"errors").length)}`;
-}
-
-function getItems() {
-  if (!latest) return [];
-  switch(activeView) {
-    case "buy": return arr(latest,"strongBuy","bullish");
-    case "sell": return arr(latest,"strongSell","bearish");
-    case "long": return arr(latest,"longBuildup");
-    case "short": return arr(latest,"shortBuildup");
-    case "errors": return arr(latest,"errors");
-    default:
-      return [
-        ...arr(latest,"strongBuy","bullish"),
-        ...arr(latest,"strongSell","bearish"),
-        ...arr(latest,"longBuildup"),
-        ...arr(latest,"shortBuildup"),
-        ...arr(latest,"waiting")
-      ];
-  }
-}
-
-function card(item) {
-  const sig = String(item.signal || item.signalType || "WAIT").toUpperCase();
-  const cls = sig.includes("BUY") ? "buy" : sig.includes("SELL") ? "sell" : "wait";
-  const opt = item.option && item.option.success ? item.option : null;
-  const oiClass = item.oiClassification || "—";
-  return `
-  <article class="stock">
-    <div class="stocktop"><div class="symbol">${esc(item.symbol || item.name || "Unknown")}</div><span class="badge ${cls}">${esc(sig)}</span></div>
-    <div class="small" style="margin-top:4px">${esc(item.signalType || item.reason || "—")} • ${esc(item.candleTime || "—")} • ${esc(item.timeframe || "5 MINUTES")}</div>
-    <div class="data">
-      <div class="datum"><small>Price / Entry</small><b>${fmt(item.price ?? item.entry)}</b></div>
-      <div class="datum"><small>RSI 14</small><b>${fmt(item.rsi)}</b></div>
-      <div class="datum"><small>VWAP</small><b>${fmt(item.vwap)}</b></div>
-      <div class="datum"><small>Volume Ratio</small><b>${item.volumeRatio==null?"—":fmt(item.volumeRatio)+"x"}</b></div>
-      <div class="datum"><small>Volume</small><b>${fmt(item.volume)}</b></div>
-      <div class="datum"><small>OI Change %</small><b>${item.oiChangePercent==null?"—":fmt(item.oiChangePercent)+"%"}</b></div>
-      <div class="datum"><small>Futures OI</small><b>${fmt(item.futuresOI)}</b></div>
-      <div class="datum"><small>OI Classification</small><b>${esc(oiClass)}</b></div>
-      <div class="datum"><small>ORB High</small><b>${fmt(item.orbHigh)}</b></div>
-      <div class="datum"><small>ORB Low</small><b>${fmt(item.orbLow)}</b></div>
-      <div class="datum"><small>Stop Loss</small><b>${fmt(item.stopLoss)}</b></div>
-      <div class="datum"><small>Target 1 / 2</small><b>${fmt(item.target1)} / ${fmt(item.target2)}</b></div>
-    </div>
-    ${opt ? `
-    <div class="option">
-      <strong>${esc(opt.signal || "OPTION")} • ${esc(opt.tradingSymbol || opt.symbol || "")}</strong>
-      <div class="optiongrid">
-        <div><small>Strike / Expiry</small><br><b>${fmt(opt.strikePrice)} / ${esc(opt.expiry || "—")}</b></div>
-        <div><small>Premium / Entry</small><br><b>${fmt(opt.premium)} / ${fmt(opt.entry)}</b></div>
-        <div><small>Option Score</small><br><b>${fmt(opt.score)}</b></div>
-        <div><small>Option SL</small><br><b>${fmt(opt.stopLoss)}</b></div>
-        <div><small>Target 1</small><br><b>${fmt(opt.target1)}</b></div>
-        <div><small>Target 2</small><br><b>${fmt(opt.target2)}</b></div>
-      </div>
-    </div>` : ""}
-  </article>`;
-}
-
-function renderView() {
-  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active",b.dataset.view===activeView));
-  const items = getItems();
-  $("results").innerHTML = items.length ? items.map(card).join("") : `<div class="empty">No ${esc(activeView)} signals in latest scan.</div>`;
-}
-
-document.querySelectorAll(".tab").forEach(b => b.addEventListener("click",() => {
-  activeView = b.dataset.view;
-  renderView();
-}));
 
 async function refreshMaster() {
-  const b = $("masterBtn");
-  b.disabled = true;
-  b.textContent = "Refreshing…";
+
+  const btn = $("masterBtn");
+
+  btn.disabled = true;
+
+  btn.textContent = "Checking…";
+
   try {
-    const d = await api(API.master,90000);
-    $("message").innerHTML = `<div class="small">F&amp;O instrument list refreshed. Stocks available: <b>${fmt(d.fnoStockCount)}</b>.</div>`;
+
+    const data = await api(
+      API.status,
+      90000
+    );
+
+    $("mMaster").textContent =
+      data.masterLoaded === true
+      ? "YES"
+      : data.masterLoaded === false
+      ? "NO"
+      : "OK";
+
+    $("message").innerHTML =
+      `<div class="note">Backend status received. Master loaded: ${esc(data.masterLoaded ?? "status route responded")}.</div>`;
+
     await runScan(true);
-  } catch(e) {
-    $("message").innerHTML = `<div class="error">Master refresh failed: ${esc(e.message)}</div>`;
+
+  } catch(err) {
+
+    $("message").innerHTML =
+      `<div class="error">Status check failed: ${esc(err.message)}</div>`;
+
   } finally {
-    b.disabled = false;
-    b.textContent = "⟳ Refresh F&amp;O List";
+
+    btn.disabled = false;
+
+    btn.textContent = "⟳ Check Master Status";
+
   }
+
 }
 
+document.querySelectorAll(".tab").forEach(
+  btn => {
+
+    btn.addEventListener("click",() => {
+
+      activeView = btn.dataset.view;
+
+      renderSignals();
+
+    });
+
+  }
+);
+
 checkHealth();
+
 setInterval(checkHealth,60000);
+
 setInterval(() => {
-  if (!document.hidden && !busy) runScan(false);
+
+  if (!document.hidden && !busy) {
+    runScan(false);
+  }
+
 },30000);
-document.addEventListener("visibilitychange",() => {
-  if (!document.hidden && !busy) checkHealth();
-});
+
+document.addEventListener(
+  "visibilitychange",
+  () => {
+
+    if (!document.hidden && !busy) {
+      checkHealth();
+    }
+
+  }
+);
+
 </script>
+
 </body>
 </html>
