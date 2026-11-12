@@ -2,427 +2,159 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#08111f">
 <title>SMART TRADE INDIA - INDEX SELL PRO</title>
 
 <style>
-:root{
-  --bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263a55;
-  --text:#edf4ff;--muted:#91a4bd;--green:#19c784;--red:#ff5d70;
-  --amber:#f5b942;--blue:#55a7ff;
-}
-
+:root{--bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263a55;--text:#edf4ff;--muted:#91a4bd;--green:#19c784;--red:#ff5d70;--amber:#f5b942;--blue:#55a7ff}
 *{box-sizing:border-box}
-
-body{
-  margin:0;
-  background:radial-gradient(circle at 15% 0%,#142846 0,#08111f 42%);
-  color:var(--text);
-  font:14px/1.45 system-ui,Arial,sans-serif;
-}
-
+body{margin:0;background:radial-gradient(circle at 15% 0%,#142846 0,#08111f 42%);color:var(--text);font:14px/1.45 system-ui,Arial,sans-serif}
 .wrap{max-width:1250px;margin:auto;padding:16px}
-
-.top{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-  flex-wrap:wrap;
-  margin:8px 0 18px;
-}
-
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 18px}
 .brand{display:flex;align-items:center;gap:11px}
-
-.logo{
-  width:44px;height:44px;
-  border-radius:13px;
-  background:linear-gradient(135deg,#1686ff,#19c784);
-  display:grid;place-items:center;
-  font-weight:900;color:#061321;font-size:19px;
-}
-
+.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#1686ff,#19c784);display:grid;place-items:center;font-weight:900;color:#061321;font-size:19px}
 .brand h1{font-size:18px;margin:0}
-
 .sub,.small{color:var(--muted);font-size:12px}
-
 .actions{display:flex;gap:8px;flex-wrap:wrap}
-
-button{
-  border:1px solid var(--line);
-  border-radius:10px;
-  padding:10px 13px;
-  background:var(--panel2);
-  color:var(--text);
-  font-weight:650;
-  cursor:pointer;
-}
-
+button{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--panel2);color:var(--text);font-weight:650;cursor:pointer}
 button.primary{background:#1678e8;border-color:#1678e8}
-
 button:disabled{opacity:.55;cursor:wait}
-
-.statusbar{
-  display:flex;
-  align-items:center;
-  gap:9px;
-  flex-wrap:wrap;
-  background:#0d1a2b;
-  border:1px solid var(--line);
-  padding:11px 12px;
-  border-radius:12px;
-  margin-bottom:14px;
-  color:var(--muted);
-  font-size:12px;
-}
-
-.dot{
-  width:8px;height:8px;
-  border-radius:50%;
-  background:var(--amber);
-  display:inline-block;
-}
-
+.statusbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#0d1a2b;border:1px solid var(--line);padding:11px 12px;border-radius:12px;margin-bottom:14px;color:var(--muted);font-size:12px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block}
 .dot.ok{background:var(--green)}
 .dot.bad{background:var(--red)}
-
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,minmax(0,1fr));
-  gap:10px;
-  margin:12px 0;
-}
-
-.metric,.panel{
-  background:linear-gradient(180deg,#122139,#0e1a2b);
-  border:1px solid var(--line);
-  border-radius:14px;
-}
-
+.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
+.metric,.panel{background:linear-gradient(180deg,#122139,#0e1a2b);border:1px solid var(--line);border-radius:14px}
 .metric{padding:14px}
-
-.metric .label{
-  color:var(--muted);
-  font-size:11px;
-  text-transform:uppercase;
-}
-
-.metric .value{
-  font-size:25px;
-  font-weight:800;
-  margin-top:5px;
-}
-
+.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase}
+.metric .value{font-size:25px;font-weight:800;margin-top:5px}
 .green{color:var(--green)}
 .red{color:var(--red)}
 .amber{color:var(--amber)}
 .blue{color:var(--blue)}
-
 .panel{padding:14px;margin-top:13px}
-
-.panelhead{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  margin-bottom:12px;
-}
-
+.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
 .panel h2{font-size:15px;margin:0}
-
-.tabs{
-  display:flex;
-  gap:7px;
-  overflow:auto;
-  padding-bottom:4px;
-}
-
-.tab{
-  white-space:nowrap;
-  font-size:12px;
-  padding:8px 11px;
-}
-
-.tab.active{
-  background:#1b4774;
-  border-color:#3979b5;
-}
-
-.cards{
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:10px;
-}
-
-.stock{
-  background:#0b1727;
-  border:1px solid var(--line);
-  border-radius:12px;
-  padding:13px;
-  min-width:0;
-}
-
-.stocktop{
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  align-items:center;
-}
-
-.symbol{font-weight:850;font-size:16px}
-
-.badge{
-  font-size:10px;
-  font-weight:800;
-  border-radius:20px;
-  padding:4px 8px;
-  background:#27364a;
-}
-
+.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:4px}
+.tab{white-space:nowrap;font-size:12px;padding:8px 11px}
+.tab.active{background:#1b4774;border-color:#3979b5}
+.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.stock{background:#0b1727;border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}
+.stocktop{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.symbol{font-weight:850;font-size:16px;overflow-wrap:anywhere}
+.badge{font-size:10px;font-weight:800;border-radius:20px;padding:4px 8px;background:#27364a}
 .badge.buy{background:#0c4737;color:#6ff0bc}
 .badge.sell{background:#542331;color:#ff9baa}
 .badge.wait{background:#493b1b;color:#ffd77d}
-
-.data{
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:8px;
-  margin-top:12px;
-}
-
-.datum{
-  background:#111f32;
-  border-radius:8px;
-  padding:8px;
-  min-width:0;
-  overflow-wrap:anywhere;
-}
-
-.datum small{
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-}
-
+.data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
+.datum{background:#111f32;border-radius:8px;padding:8px;min-width:0;overflow-wrap:anywhere}
+.datum small{display:block;color:var(--muted);font-size:10px}
 .datum b{font-size:12px}
-
-.empty{
-  padding:25px 12px;
-  text-align:center;
-  color:var(--muted);
-  border:1px dashed var(--line);
-  border-radius:12px;
-  grid-column:1/-1;
-}
-
-.error{
-  color:#ff9baa;
-  background:#351d29;
-  border:1px solid #6b3342;
-  padding:10px;
-  border-radius:10px;
-  overflow-wrap:anywhere;
-}
-
-.note{
-  padding:10px 12px;
-  border-radius:10px;
-  background:#10263a;
-  border:1px solid #315b80;
-  color:#b9d8f5;
-  font-size:12px;
-}
-
-.footer{
-  color:var(--muted);
-  font-size:11px;
-  text-align:center;
-  padding:20px 5px;
-}
-
-.option{
-  margin-top:10px;
-  padding:10px;
-  border:1px solid #315b80;
-  background:#10263a;
-  border-radius:9px;
-}
-
+.empty{padding:25px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;grid-column:1/-1}
+.error{color:#ff9baa;background:#351d29;border:1px solid #6b3342;padding:10px;border-radius:10px;overflow-wrap:anywhere}
+.note{padding:10px 12px;border-radius:10px;background:#10263a;border:1px solid #315b80;color:#b9d8f5;font-size:12px}
+.footer{color:var(--muted);font-size:11px;text-align:center;padding:20px 5px}
+.option{margin-top:10px;padding:10px;border:1px solid #315b80;background:#10263a;border-radius:9px}
 .option strong{color:#8dc8ff}
-
-@media(max-width:800px){
-  .grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-}
-
-@media(max-width:560px){
-  .wrap{padding:11px}
-  .cards{grid-template-columns:1fr}
-  .data{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .brand h1{font-size:16px}
-  .metric .value{font-size:22px}
-}
+@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.wrap{padding:11px}.cards{grid-template-columns:1fr}.data{grid-template-columns:repeat(2,minmax(0,1fr))}.brand h1{font-size:16px}.metric .value{font-size:22px}}
 </style>
 </head>
 
 <body>
-
 <div class="wrap">
 
 <header class="top">
-
 <div class="brand">
 <div class="logo">ST</div>
-
 <div>
 <h1>SMART TRADE INDIA INDEX SELL PRO</h1>
-<div class="sub">
-INDEX OPTIONS • LIVE BACKEND • CLOSED 5-MINUTE DATA
+<div class="sub">INDEX OPTIONS • LIVE BACKEND • CLOSED 5-MINUTE DATA</div>
 </div>
-</div>
-
 </div>
 
 <div class="actions">
-
-<button id="scanBtn" class="primary"
-onclick="runScan(true)">
-↻ Scan Now
-</button>
-
-<button id="masterBtn"
-onclick="refreshMaster()">
-⟳ Check Master Status
-</button>
-
+<button id="scanBtn" class="primary" onclick="runScan(true)">↻ Scan Now</button>
+<button id="masterBtn" onclick="refreshMaster()">⟳ Check Master Status</button>
 </div>
 </header>
 
 <div class="statusbar">
-
 <span id="healthDot" class="dot"></span>
-
 <b id="healthText">Checking backend…</b>
-
 <span>•</span>
-
 <span id="marketText">Market time: —</span>
-
 <span>•</span>
-
 <span id="updatedText">Last update: —</span>
-
 <span>•</span>
-
 <span>Auto refresh: 30 sec</span>
-
 </div>
 
 <section class="grid">
-
 <div class="metric">
 <div class="label">Signals Returned</div>
 <div class="value blue" id="mTotal">—</div>
 </div>
-
 <div class="metric">
 <div class="label">Sell Signals</div>
 <div class="value red" id="mSell">—</div>
 </div>
-
 <div class="metric">
 <div class="label">Buy Signals</div>
 <div class="value green" id="mBuy">—</div>
 </div>
-
 <div class="metric">
 <div class="label">Master Loaded</div>
 <div class="value amber" id="mMaster">—</div>
 </div>
-
 </section>
 
 <section class="panel">
-
 <div class="panelhead">
-
 <h2>Index Market Signals</h2>
-
-<span class="small" id="scanInfo">
-Waiting for first scan
-</span>
-
+<span class="small" id="scanInfo">Waiting for first scan</span>
 </div>
 
 <div class="tabs">
-
-<button class="tab active" data-view="all">
-All Signals
-</button>
-
-<button class="tab" data-view="sell">
-Sell
-</button>
-
-<button class="tab" data-view="buy">
-Buy
-</button>
-
-<button class="tab" data-view="other">
-Other / Waiting
-</button>
-
+<button class="tab active" data-view="all">All Signals</button>
+<button class="tab" data-view="sell">Sell</button>
+<button class="tab" data-view="buy">Buy</button>
+<button class="tab" data-view="other">Other / Waiting</button>
 </div>
 
-<div id="message" style="margin:12px 0"></div>
+<div id="message" style="margin:12px 0" aria-live="polite"></div>
 
 <div id="results" class="cards">
-
-<div class="empty">
-Tap Scan Now to request the latest index scanner result.
+<div class="empty">Tap Scan Now to request the latest index scanner result.</div>
 </div>
-
-</div>
-
 </section>
 
 <section class="panel">
-
 <div class="panelhead">
 <h2>Backend Information</h2>
 </div>
-
 <div class="note">
-This page calls your existing server routes:
+This page calls your server routes:
 <b>/health</b>,
-<b>/api/status</b> and
+<b>/api/status</b>,
 <b>/api/index-sell-scan</b>.
-
 It does not place orders. Signals are informational and are not guaranteed trading outcomes.
 </div>
-
 <div class="small" style="margin-top:10px">
 Backend: smart-money-pro-scanner.onrender.com
 </div>
-
 </section>
 
-<div class="footer">
-SMART TRADE INDIA • INDEX SELL PRO
-</div>
-
+<div class="footer">SMART TRADE INDIA • INDEX SELL PRO</div>
 </div>
 
 <script>
-
 "use strict";
 
-// RENDER BACKEND URL
 const API_BASE =
 "https://smart-money-pro-scanner.onrender.com";
 
-// YOUR SERVER.JS API ROUTES
 const API = {
   health: "/health",
   status: "/api/status",
@@ -435,10 +167,10 @@ let activeView = "all";
 let busy = false;
 
 const $ = id => document.getElementById(id);
+const EMPTY = "—";
 
 function esc(value) {
-
-  return String(value ?? "—").replace(
+  return String(value ?? EMPTY).replace(
     /[&<>"']/g,
     ch => ({
       "&":"&amp;",
@@ -448,34 +180,23 @@ function esc(value) {
       "'":"&#39;"
     }[ch])
   );
-
 }
 
 function fmt(value) {
-
-  if (
-    value === null ||
-    value === undefined ||
-    value === ""
-  ) return "—";
-
-  if (
-    typeof value === "string" &&
-    !Number.isFinite(Number(value))
-  ) return esc(value);
+  if (value === null || value === undefined || value === "") {
+    return EMPTY;
+  }
 
   const n = Number(value);
 
   return Number.isFinite(n)
     ? n.toLocaleString("en-IN", {
-        maximumFractionDigits:2
+        maximumFractionDigits: 2
       })
-    : esc(value);
-
+    : String(value);
 }
 
-async function api(path, timeout=90000) {
-
+async function api(path, timeout = 90000) {
   const controller = new AbortController();
 
   const timer = setTimeout(
@@ -484,19 +205,18 @@ async function api(path, timeout=90000) {
   );
 
   try {
-
     const response = await fetch(
       API_BASE + path,
       {
-        method:"GET",
-        cache:"no-store",
-        signal:controller.signal
+        method: "GET",
+        cache: "no-store",
+        signal: controller.signal
       }
     );
 
     const data = await response.json().catch(
       () => ({
-        message:"Server returned invalid JSON"
+        message: "Server returned invalid JSON"
       })
     );
 
@@ -508,7 +228,10 @@ async function api(path, timeout=90000) {
       );
     }
 
-    if (data && data.status === "ERROR") {
+    if (
+      data &&
+      String(data.status).toUpperCase() === "ERROR"
+    ) {
       throw new Error(
         data.message || "Backend returned ERROR"
       );
@@ -517,34 +240,27 @@ async function api(path, timeout=90000) {
     return data;
 
   } finally {
-
     clearTimeout(timer);
-
   }
+}
 
-}function setHealth(ok,text) {
-
+function setHealth(ok, text) {
   $("healthDot").className =
     "dot " + (ok ? "ok" : "bad");
 
   $("healthText").textContent = text;
-
 }
 
 async function checkHealth() {
-
   try {
-
-    const h = await api(API.health,25000);
-
-    const tokenText =
-      h.tokenConfigured === true
-      ? " • Upstox token configured"
-      : "";
+    const h = await api(API.health, 25000);
 
     setHealth(
       true,
-      "Backend LIVE"+tokenText
+      "Backend LIVE" +
+      (h.tokenConfigured === true
+        ? " • Upstox token configured"
+        : "")
     );
 
     if (h.marketTime) {
@@ -552,97 +268,73 @@ async function checkHealth() {
         "Market time: " + h.marketTime;
     }
 
-  } catch(err) {
-
+  } catch (err) {
     setHealth(
       false,
       "Backend check failed: " + err.message
     );
-
   }
-
 }
 
 function getSignals(data) {
-
-  if (!data) return [];
-
-  if (Array.isArray(data.signals)) {
+  if (Array.isArray(data?.signals)) {
     return data.signals;
   }
 
-  if (Array.isArray(data.data?.signals)) {
+  if (Array.isArray(data?.data?.signals)) {
     return data.data.signals;
   }
 
-  if (Array.isArray(data.results)) {
+  if (Array.isArray(data?.results)) {
     return data.results;
   }
 
   return [];
-
 }
 
 function signalText(item) {
-
   return String(
-    item.signal ||
-    item.signalType ||
-    item.action ||
-    item.direction ||
-    item.type ||
-    item.optionType ||
-    item.classification ||
+    item.signal ??
+    item.signalType ??
+    item.action ??
+    item.direction ??
+    item.classification ??
+    item.type ??
     ""
   ).toUpperCase();
-
 }
 
-function classify(item) {
+// Correct BUY / SELL classification
+// CE / PE are option types, not BUY / SELL actions.
 
+function classify(item) {
   const s = signalText(item);
 
   if (
     s.includes("SELL") ||
-    s.includes("PE") ||
     s.includes("BEAR")
   ) return "sell";
 
   if (
     s.includes("BUY") ||
-    s.includes("CE") ||
     s.includes("BULL")
   ) return "buy";
 
   return "other";
-
 }
 
 function filteredSignals() {
-
   const signals = getSignals(latestData);
 
-  if (activeView === "all") {
-    return signals;
-  }
-
-  return signals.filter(
-    item => classify(item) === activeView
-  );
-
+  return activeView === "all"
+    ? signals
+    : signals.filter(
+        item => classify(item) === activeView
+      );
 }
 
 function renderSummary(data) {
-
   const signals = getSignals(data);
-
-  const sellCount = signals.filter(
-    x => classify(x) === "sell"
-  ).length;
-
-  const buyCount = signals.filter(
-    x => classify(x) === "buy"
-  ).length;
 
   $("mTotal").textContent = fmt(
     data.totalSignals ??
@@ -651,54 +343,39 @@ function renderSummary(data) {
   );
 
   $("mSell").textContent = fmt(
-    data.strongSellCount ??
-    data.sellCount ??
-    sellCount
+    signals.filter(
+      x => classify(x) === "sell"
+    ).length
   );
 
   $("mBuy").textContent = fmt(
-    data.strongBuyCount ??
-    data.buyCount ??
-    buyCount
+    signals.filter(
+      x => classify(x) === "buy"
+    ).length
   );
 
-  $("mMaster").textContent =
-    data.masterLoaded === true
-    ? "YES"
-    : data.masterLoaded === false
-    ? "NO"
-    : "—";
-
+  if (typeof data.masterLoaded === "boolean") {
+    $("mMaster").textContent =
+      data.masterLoaded ? "YES" : "NO";
+  }
 }
 
-function firstValue(item,keys) {
-
+function firstValue(item, keys) {
   for (const key of keys) {
-
     if (
-      item[key] !== undefined &&
+      item?.[key] !== undefined &&
       item[key] !== null &&
       item[key] !== ""
     ) {
       return item[key];
     }
-
   }
 
-  return "—";
-
+  return EMPTY;
 }
 
 function signalCard(item) {
-
   const kind = classify(item);
-
-  const badgeClass =
-    kind === "sell"
-    ? "sell"
-    : kind === "buy"
-    ? "buy"
-    : "wait";
 
   const label = firstValue(
     item,
@@ -707,8 +384,8 @@ function signalCard(item) {
       "signalType",
       "action",
       "direction",
-      "type",
-      "classification"
+      "classification",
+      "type"
     ]
   );
 
@@ -725,85 +402,67 @@ function signalCard(item) {
   );
 
   const fields = [
-
-    ["Price",[
-      "price",
-      "ltp",
-      "lastPrice",
-      "underlyingPrice"
+    ["Price", [
+      "price", "ltp", "lastPrice",
+      "underlyingPrice", "futuresPrice"
     ]],
-
-    ["Change %",[
-      "changePercent",
-      "priceChangePercent",
+    ["Change %", [
+      "changePercent", "priceChangePercent",
       "change_pct"
     ]],
-
-    ["Strike",[
-      "strikePrice",
-      "strike",
-      "strike_price"
+    ["Strike", [
+      "strikePrice", "strike", "strike_price"
     ]],
-
-    ["Option",[
-      "optionType",
-      "instrumentType",
-      "right",
-      "cePe"
+    ["Option", [
+      "optionType", "instrumentType", "right", "cePe"
     ]],
-
-    ["Expiry",[
-      "expiry",
-      "expiryDate"
+    ["Expiry", [
+      "expiry", "expiryDate"
     ]],
-
-    ["Premium",[
-      "premium",
-      "optionLtp",
-      "optionPrice"
+    ["Premium", [
+      "premium", "optionLtp",
+      "optionPrice", "entryPremium"
     ]],
-
-    ["RSI",[
-      "rsi",
-      "rsi14"
+    ["Entry", [
+      "entry", "entryPrice"
     ]],
-
-    ["VWAP",[
+    ["Stop Loss", [
+      "stopLoss", "sl"
+    ]],
+    ["Target 1", [
+      "target1", "targetPrice1"
+    ]],
+    ["Target 2", [
+      "target2", "targetPrice2"
+    ]],
+    ["RSI", [
+      "rsi", "rsi14"
+    ]],
+    ["VWAP", [
       "vwap"
     ]],
-
-    ["Volume",[
-      "volume",
-      "totalVolume"
+    ["Volume", [
+      "volume", "totalVolume"
     ]],
-
-    ["OI",[
-      "oi",
-      "openInterest",
-      "open_interest"
+    ["OI", [
+      "oi", "openInterest", "open_interest"
     ]],
-
-    ["OI Change %",[
+    ["OI Change %", [
       "oiChangePercent",
       "oiChangePct",
       "oi_change_percent"
     ]],
-
-    ["Signal Time",[
-      "signalTime",
-      "candleTime",
-      "timestamp",
-      "time"
+    ["Signal Time", [
+      "signalTime", "candleTime",
+      "timestamp", "time"
     ]]
-
   ];
 
-  let cells = fields.map(
-    ([title,keys]) => {
+  const cells = fields.map(
+    ([title, keys]) => {
+      const value = firstValue(item, keys);
 
-      const value = firstValue(item,keys);
-
-      if (value === "—") return "";
+      if (value === EMPTY) return "";
 
       return `
         <div class="datum">
@@ -811,7 +470,6 @@ function signalCard(item) {
           <b>${esc(value)}</b>
         </div>
       `;
-
     }
   ).join("");
 
@@ -825,41 +483,9 @@ function signalCard(item) {
     ]
   );
 
-  return `
-
-  <article class="stock">
-
-    <div class="stocktop">
-
-      <div class="symbol">
-        ${esc(symbol)}
-      </div>
-
-      <span class="badge ${badgeClass}">
-        ${esc(label === "—" ? kind.toUpperCase() : label)}
-      </span>
-
-    </div>
-
-    ${
-      reason !== "—"
-      ? `<div class="small" style="margin-top:6px">
-          ${esc(reason)}
-        </div>`
-      : ""
-    }
-
-    <div class="data">
-
-      ${
-        cells ||
-        '<div class="small">Signal received; no additional fields supplied by API.</div>'
-      }
-
-    </div>
-
-    ${
-      item.option && typeof item.option === "object"
+  const option =
+    item.option &&
+    typeof item.option === "object"
       ? `
         <div class="option">
           <strong>Option details</strong>
@@ -868,63 +494,81 @@ function signalCard(item) {
           </div>
         </div>
       `
-      : ""
-    }
+      : "";
 
-  </article>
+  return `
+    <article class="stock">
+      <div class="stocktop">
+        <div class="symbol">${esc(symbol)}</div>
 
+        <span class="badge ${
+          kind === "sell"
+            ? "sell"
+            : kind === "buy"
+            ? "buy"
+            : "wait"
+        }">
+          ${esc(label === EMPTY ? kind.toUpperCase() : label)}
+        </span>
+      </div>
+
+      ${
+        reason !== EMPTY
+          ? `<div class="small" style="margin-top:6px">
+              ${esc(reason)}
+            </div>`
+          : ""
+      }
+
+      <div class="data">
+        ${
+          cells ||
+          '<div class="small">Signal received; no additional fields supplied by API.</div>'
+        }
+      </div>
+
+      ${option}
+    </article>
   `;
-
 }
 
 function renderSignals() {
-
   document.querySelectorAll(".tab").forEach(
     btn => {
-
       btn.classList.toggle(
         "active",
         btn.dataset.view === activeView
       );
-
     }
   );
 
   const signals = filteredSignals();
 
   $("results").innerHTML = signals.length
-
     ? signals.map(signalCard).join("")
-
     : `
       <div class="empty">
         No ${esc(activeView)} signals returned in the latest scan.
       </div>
     `;
-
 }
 
 function setBusy(on) {
-
   busy = on;
 
   $("scanBtn").disabled = on;
 
   $("scanBtn").textContent =
     on ? "Scanning…" : "↻ Scan Now";
-
 }
 
-async function runScan(force=true) {
-
+async function runScan(force = true) {
   if (busy) return;
 
   setBusy(true);
-
   $("message").innerHTML = "";
 
   try {
-
     const data = await api(
       force ? API.scan : API.scanNormal,
       120000
@@ -933,131 +577,111 @@ async function runScan(force=true) {
     latestData = data;
 
     renderSummary(data);
-
     renderSignals();
 
-    const nowText =
-      data.marketTime ||
-      data.updatedAt ||
-      new Date().toLocaleTimeString("en-IN");
-
     $("updatedText").textContent =
-      "Last update: " + nowText;
+      "Last update: " +
+      (
+        data.marketTime ||
+        data.updatedAt ||
+        new Date().toLocaleTimeString("en-IN")
+      );
 
     $("marketText").textContent =
-      "Market time: " + (data.marketTime || "—");
+      "Market time: " + (data.marketTime || EMPTY);
 
     $("scanInfo").textContent =
-      `${data.totalSignals ?? getSignals(data).length} signals • ${data.status || "Response received"} • ${data.scanner || "Index scanner"}`;
+      `${getSignals(data).length} signals • ${
+        data.status || "Response received"
+      } • ${data.scanner || "Index scanner"}`;
 
-    if (data.status === "WAITING") {
-
+    if (String(data.status).toUpperCase() === "WAITING") {
       $("message").innerHTML =
-        '<div class="note">Scanner is waiting for its required market data or candle confirmation.</div>';
-
+        '<div class="note">Scanner is waiting for market data or candle confirmation.</div>';
     } else if (data.message) {
-
       $("message").innerHTML =
         `<div class="note">${esc(data.message)}</div>`;
-
     }
 
-  } catch(err) {
-
+  } catch (err) {
     $("message").innerHTML =
-      `<div class="error">Scanner API error: ${esc(err.message)}</div>`;
+      `<div class="error">Scanner API error: ${
+        esc(err.name === "AbortError"
+          ? "Request timed out"
+          : err.message)
+      }</div>`;
 
-    $("results").innerHTML =
-      '<div class="empty">No scanner data loaded. Check the backend response.</div>';
+    if (!latestData) {
+      $("results").innerHTML =
+        '<div class="empty">No scanner data loaded. Check the backend response.</div>';
+    }
 
   } finally {
-
     setBusy(false);
-
   }
-
 }
 
 async function refreshMaster() {
-
   const btn = $("masterBtn");
 
   btn.disabled = true;
-
   btn.textContent = "Checking…";
 
   try {
-
-    const data = await api(
-      API.status,
-      90000
-    );
+    const data = await api(API.status, 90000);
 
     $("mMaster").textContent =
       data.masterLoaded === true
-      ? "YES"
-      : data.masterLoaded === false
-      ? "NO"
-      : "OK";
+        ? "YES"
+        : data.masterLoaded === false
+        ? "NO"
+        : "UNKNOWN";
 
     $("message").innerHTML =
-      `<div class="note">Backend status received. Master loaded: ${esc(data.masterLoaded ?? "status route responded")}.</div>`;
+      `<div class="note">Backend status received. Master loaded: ${
+        esc(data.masterLoaded ?? "unknown")
+      }.</div>`;
 
-    await runScan(true);
-
-  } catch(err) {
-
+  } catch (err) {
     $("message").innerHTML =
-      `<div class="error">Status check failed: ${esc(err.message)}</div>`;
+      `<div class="error">Status check failed: ${
+        esc(err.message)
+      }</div>`;
 
   } finally {
-
     btn.disabled = false;
-
     btn.textContent = "⟳ Check Master Status";
-
   }
-
 }
 
 document.querySelectorAll(".tab").forEach(
   btn => {
-
-    btn.addEventListener("click",() => {
-
+    btn.addEventListener("click", () => {
       activeView = btn.dataset.view;
-
       renderSignals();
-
     });
-
   }
 );
 
 checkHealth();
 
-setInterval(checkHealth,60000);
+setInterval(checkHealth, 60000);
 
 setInterval(() => {
-
   if (!document.hidden && !busy) {
     runScan(false);
   }
-
-},30000);
+}, 30000);
 
 document.addEventListener(
   "visibilitychange",
   () => {
-
     if (!document.hidden && !busy) {
       checkHealth();
     }
-
   }
 );
 
 </script>
-
 </body>
 </html>
