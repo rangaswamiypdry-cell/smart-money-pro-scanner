@@ -1,685 +1,1003 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#08111f">
-<title>SMART TRADE INDIA - INDEX SELL PRO</title>
+
+<title>SMART MONEY PRO - INDEX SELL PRO</title>
 
 <style>
-:root{--bg:#08111f;--panel:#101d30;--panel2:#14243a;--line:#263a55;--text:#edf4ff;--muted:#91a4bd;--green:#19c784;--red:#ff5d70;--amber:#f5b942;--blue:#55a7ff}
+:root{
+--bg:#08111f;
+--panel:#111e32;
+--panel2:#172740;
+--line:#293c58;
+--text:#edf4ff;
+--muted:#91a4bd;
+--green:#19d49a;
+--red:#ff526d;
+--amber:#ffc45b;
+--blue:#55a7ff;
+}
+
 *{box-sizing:border-box}
-body{margin:0;background:radial-gradient(circle at 15% 0%,#142846 0,#08111f 42%);color:var(--text);font:14px/1.45 system-ui,Arial,sans-serif}
-.wrap{max-width:1250px;margin:auto;padding:16px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin:8px 0 18px}
-.brand{display:flex;align-items:center;gap:11px}
-.logo{width:44px;height:44px;border-radius:13px;background:linear-gradient(135deg,#1686ff,#19c784);display:grid;place-items:center;font-weight:900;color:#061321;font-size:19px}
-.brand h1{font-size:18px;margin:0}
-.sub,.small{color:var(--muted);font-size:12px}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-button{border:1px solid var(--line);border-radius:10px;padding:10px 13px;background:var(--panel2);color:var(--text);font-weight:650;cursor:pointer}
-button.primary{background:#1678e8;border-color:#1678e8}
-button:disabled{opacity:.55;cursor:wait}
-.statusbar{display:flex;align-items:center;gap:9px;flex-wrap:wrap;background:#0d1a2b;border:1px solid var(--line);padding:11px 12px;border-radius:12px;margin-bottom:14px;color:var(--muted);font-size:12px}
-.dot{width:8px;height:8px;border-radius:50%;background:var(--amber);display:inline-block}
+
+body{
+margin:0;
+background:var(--bg);
+color:var(--text);
+font:14px/1.5 system-ui,Arial;
+}
+
+.wrap{
+max-width:1250px;
+margin:auto;
+padding:15px;
+}
+
+header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:12px;
+padding:15px 0 20px;
+border-bottom:1px solid var(--line);
+}
+
+.brand{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.logo{
+width:46px;
+height:46px;
+border-radius:13px;
+background:linear-gradient(135deg,#1686ff,#19d49a);
+display:grid;
+place-items:center;
+font-size:20px;
+font-weight:900;
+color:#061321;
+}
+
+h1{font-size:19px;margin:0}
+h2{font-size:16px;margin:0}
+
+.sub,.small{
+color:var(--muted);
+font-size:12px;
+}
+
+.actions{
+display:flex;
+gap:8px;
+flex-wrap:wrap;
+}
+
+button{
+padding:11px 14px;
+border:1px solid var(--line);
+border-radius:10px;
+background:var(--panel2);
+color:white;
+font-weight:700;
+cursor:pointer;
+}
+
+button.primary{
+background:#087e62;
+border-color:#087e62;
+}
+
+button:disabled{opacity:.5}
+
+.status{
+display:flex;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+padding:13px;
+margin-top:15px;
+background:var(--panel);
+border:1px solid var(--line);
+border-radius:12px;
+}
+
+.dot{
+height:9px;
+width:9px;
+border-radius:50%;
+background:var(--amber);
+}
+
 .dot.ok{background:var(--green)}
 .dot.bad{background:var(--red)}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin:12px 0}
-.metric,.panel{background:linear-gradient(180deg,#122139,#0e1a2b);border:1px solid var(--line);border-radius:14px}
-.metric{padding:14px}
-.metric .label{color:var(--muted);font-size:11px;text-transform:uppercase}
-.metric .value{font-size:25px;font-weight:800;margin-top:5px}
+
+.grid{
+display:grid;
+grid-template-columns:repeat(4,minmax(0,1fr));
+gap:11px;
+margin-top:14px;
+}
+
+.metric,.panel{
+background:var(--panel);
+border:1px solid var(--line);
+border-radius:14px;
+}
+
+.metric{padding:15px}
+
+.label{
+color:var(--muted);
+font-size:11px;
+}
+
+.value{
+font-size:27px;
+font-weight:850;
+margin-top:5px;
+}
+
 .green{color:var(--green)}
 .red{color:var(--red)}
 .amber{color:var(--amber)}
 .blue{color:var(--blue)}
-.panel{padding:14px;margin-top:13px}
-.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
-.panel h2{font-size:15px;margin:0}
-.tabs{display:flex;gap:7px;overflow:auto;padding-bottom:4px}
-.tab{white-space:nowrap;font-size:12px;padding:8px 11px}
-.tab.active{background:#1b4774;border-color:#3979b5}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
-.stock{background:#0b1727;border:1px solid var(--line);border-radius:12px;padding:13px;min-width:0}
-.stocktop{display:flex;justify-content:space-between;gap:8px;align-items:center}
-.symbol{font-weight:850;font-size:16px;overflow-wrap:anywhere}
-.badge{font-size:10px;font-weight:800;border-radius:20px;padding:4px 8px;background:#27364a}
-.badge.buy{background:#0c4737;color:#6ff0bc}
-.badge.sell{background:#542331;color:#ff9baa}
-.badge.wait{background:#493b1b;color:#ffd77d}
-.data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:12px}
-.datum{background:#111f32;border-radius:8px;padding:8px;min-width:0;overflow-wrap:anywhere}
-.datum small{display:block;color:var(--muted);font-size:10px}
+
+.panel{
+padding:15px;
+margin-top:14px;
+}
+
+.panelhead{
+display:flex;
+justify-content:space-between;
+align-items:center;
+flex-wrap:wrap;
+gap:10px;
+margin-bottom:13px;
+}
+
+.tabs{
+display:flex;
+gap:7px;
+overflow-x:auto;
+padding-bottom:5px;
+}
+
+.tab{
+white-space:nowrap;
+font-size:12px;
+padding:9px 12px;
+}
+
+.tab.active{
+background:#194b76;
+border-color:#3986c5;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(2,minmax(0,1fr));
+gap:11px;
+}
+
+.stock{
+background:#0b1727;
+border:1px solid var(--line);
+border-radius:12px;
+padding:14px;
+min-width:0;
+}
+
+.stocktop{
+display:flex;
+justify-content:space-between;
+align-items:center;
+gap:8px;
+}
+
+.symbol{
+font-size:17px;
+font-weight:850;
+overflow-wrap:anywhere;
+}
+
+.badge{
+font-size:10px;
+font-weight:850;
+padding:5px 9px;
+border-radius:20px;
+background:#34435a;
+}
+
+.badge.sell{
+background:#542331;
+color:#ff9baa;
+}
+
+.badge.buy{
+background:#0c4737;
+color:#6ff0bc;
+}
+
+.badge.wait{
+background:#493b1b;
+color:#ffd77d;
+}
+
+.data{
+display:grid;
+grid-template-columns:repeat(3,minmax(0,1fr));
+gap:8px;
+margin-top:13px;
+}
+
+.datum{
+background:#14243a;
+border-radius:8px;
+padding:9px;
+min-width:0;
+overflow-wrap:anywhere;
+}
+
+.datum small{
+display:block;
+color:var(--muted);
+font-size:10px;
+}
+
 .datum b{font-size:12px}
-.empty{padding:25px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px;grid-column:1/-1}
-.error{color:#ff9baa;background:#351d29;border:1px solid #6b3342;padding:10px;border-radius:10px;overflow-wrap:anywhere}
-.note{padding:10px 12px;border-radius:10px;background:#10263a;border:1px solid #315b80;color:#b9d8f5;font-size:12px}
-.footer{color:var(--muted);font-size:11px;text-align:center;padding:20px 5px}
-.option{margin-top:10px;padding:10px;border:1px solid #315b80;background:#10263a;border-radius:9px}
-.option strong{color:#8dc8ff}
-@media(max-width:800px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
-@media(max-width:560px){.wrap{padding:11px}.cards{grid-template-columns:1fr}.data{grid-template-columns:repeat(2,minmax(0,1fr))}.brand h1{font-size:16px}.metric .value{font-size:22px}}
+
+.reason{
+margin-top:10px;
+color:#a9c7e7;
+font-size:12px;
+}
+
+.empty{
+grid-column:1/-1;
+padding:28px 12px;
+text-align:center;
+color:var(--muted);
+border:1px dashed var(--line);
+border-radius:12px;
+}
+
+.note{
+padding:11px;
+background:#10263a;
+border:1px solid #315b80;
+border-radius:10px;
+color:#b9d8f5;
+font-size:12px;
+}
+
+.error{
+padding:11px;
+background:#351d29;
+border:1px solid #6b3342;
+color:#ff9baa;
+border-radius:10px;
+overflow-wrap:anywhere;
+}
+
+.footer{
+text-align:center;
+color:var(--muted);
+padding:25px 5px;
+font-size:11px;
+}
+
+@media(max-width:800px){
+.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+}
+
+@media(max-width:550px){
+.wrap{padding:10px}
+.cards{grid-template-columns:1fr}
+.data{grid-template-columns:repeat(2,minmax(0,1fr))}
+h1{font-size:16px}
+.value{font-size:23px}
+}
 </style>
 </head>
 
 <body>
 <div class="wrap">
 
-<header class="top">
+<header>
 <div class="brand">
-<div class="logo">ST</div>
+<div class="logo">SM</div>
 <div>
-<h1>SMART TRADE INDIA INDEX SELL PRO</h1>
-<div class="sub">INDEX OPTIONS • LIVE BACKEND • CLOSED 5-MINUTE DATA</div>
+<h1>SMART MONEY PRO V9</h1>
+<div class="sub">INDEX SELL PRO • NSE • LIVE BACKEND • 5 MIN</div>
 </div>
 </div>
 
 <div class="actions">
-<button id="scanBtn" class="primary" onclick="runScan(true)">↻ Scan Now</button>
-<button id="masterBtn" onclick="refreshMaster()">⟳ Check Master Status</button>
+<button id="scanBtn" class="primary">↻ SCAN NOW</button>
+<button id="statusBtn">⟳ STATUS</button>
 </div>
 </header>
 
-<div class="statusbar">
-<span id="healthDot" class="dot"></span>
-<b id="healthText">Checking backend…</b>
+<div class="status">
+<span id="dot" class="dot"></span>
+<b id="health">Connecting Backend...</b>
 <span>•</span>
-<span id="marketText">Market time: —</span>
+<span id="market">Market: —</span>
 <span>•</span>
-<span id="updatedText">Last update: —</span>
-<span>•</span>
-<span>Auto refresh: 30 sec</span>
+<span id="updated">Updated: —</span>
 </div>
 
 <section class="grid">
+
 <div class="metric">
-<div class="label">Signals Returned</div>
-<div class="value blue" id="mTotal">—</div>
+<div class="label">TOTAL SIGNALS</div>
+<div class="value blue" id="total">0</div>
 </div>
+
 <div class="metric">
-<div class="label">Sell Signals</div>
-<div class="value red" id="mSell">—</div>
+<div class="label">STRONG SELL</div>
+<div class="value red" id="sell">0</div>
 </div>
+
 <div class="metric">
-<div class="label">Buy Signals</div>
-<div class="value green" id="mBuy">—</div>
+<div class="label">STRONG BUY</div>
+<div class="value green" id="buy">0</div>
 </div>
+
 <div class="metric">
-<div class="label">Master Loaded</div>
-<div class="value amber" id="mMaster">—</div>
+<div class="label">WAITING</div>
+<div class="value amber" id="waiting">0</div>
 </div>
+
+<div class="metric">
+<div class="label">LONG BUILDUP</div>
+<div class="value green" id="long">0</div>
+</div>
+
+<div class="metric">
+<div class="label">SHORT BUILDUP</div>
+<div class="value red" id="short">0</div>
+</div>
+
+<div class="metric">
+<div class="label">MASTER LOADED</div>
+<div class="value amber" id="master">—</div>
+</div>
+
+<div class="metric">
+<div class="label">SCAN STATUS</div>
+<div class="value blue" id="scanStatus">READY</div>
+</div>
+
 </section>
 
 <section class="panel">
+
 <div class="panelhead">
-<h2>Index Market Signals</h2>
-<span class="small" id="scanInfo">Waiting for first scan</span>
+<h2>INDEX SELL PRO SIGNALS</h2>
+<span class="small" id="scanInfo">Waiting for scan</span>
 </div>
 
 <div class="tabs">
-<button class="tab active" data-view="all">All Signals</button>
-<button class="tab" data-view="sell">Sell</button>
-<button class="tab" data-view="buy">Buy</button>
-<button class="tab" data-view="other">Other / Waiting</button>
+<button class="tab active" data-view="all">ALL</button>
+<button class="tab" data-view="sell">SELL</button>
+<button class="tab" data-view="buy">BUY</button>
+<button class="tab" data-view="short">SHORT BUILDUP</button>
+<button class="tab" data-view="long">LONG BUILDUP</button>
+<button class="tab" data-view="other">WAITING</button>
 </div>
 
-<div id="message" style="margin:12px 0" aria-live="polite"></div>
+<div id="message" style="margin:12px 0"></div>
 
 <div id="results" class="cards">
-<div class="empty">Tap Scan Now to request the latest index scanner result.</div>
+<div class="empty">Press SCAN NOW to load market signals.</div>
 </div>
+
 </section>
 
 <section class="panel">
-<div class="panelhead">
-<h2>Backend Information</h2>
+<h2>BACKEND CONNECTION</h2>
+
+<div class="note" style="margin-top:12px">
+Backend API:
+<br><br>
+<b>/health</b>
+<br>
+<b>/api/status</b>
+<br>
+<b>/api/index-sell-scan</b>
+<br><br>
+Data is requested from your Render server.
+Only actual API responses are displayed.
+No automatic orders are placed.
 </div>
-<div class="note">
-This page calls your server routes:
-<b>/health</b>,
-<b>/api/status</b>,
-<b>/api/index-sell-scan</b>.
-It does not place orders. Signals are informational and are not guaranteed trading outcomes.
-</div>
-<div class="small" style="margin-top:10px">
+
+<div class="small" style="margin-top:12px">
 Backend: smart-money-pro-scanner.onrender.com
 </div>
 </section>
 
-<div class="footer">SMART TRADE INDIA • INDEX SELL PRO</div>
+<div class="footer">
+SMART MONEY PRO V9 • INDEX SELL PRO
+<br>
+Informational signals only. Trading involves risk.
+</div>
+
 </div>
 
 <script>
 "use strict";
 
+/* BACKEND CONFIGURATION */
+
 const API_BASE =
 "https://smart-money-pro-scanner.onrender.com";
 
 const API = {
-  health: "/health",
-  status: "/api/status",
-  scan: "/api/index-sell-scan?force=true",
-  scanNormal: "/api/index-sell-scan"
+health:"/health",
+status:"/api/status",
+scan:"/api/index-sell-scan?force=true",
+normal:"/api/index-sell-scan"
 };
+
+const $ = id => document.getElementById(id);
 
 let latestData = null;
 let activeView = "all";
 let busy = false;
 
-const $ = id => document.getElementById(id);
-const EMPTY = "—";
-
-function esc(value) {
-  return String(value ?? EMPTY).replace(
-    /[&<>"']/g,
-    ch => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[ch])
-  );
-}
-
-function fmt(value) {
-  if (value === null || value === undefined || value === "") {
-    return EMPTY;
-  }
-
-  const n = Number(value);
-
-  return Number.isFinite(n)
-    ? n.toLocaleString("en-IN", {
-        maximumFractionDigits: 2
-      })
-    : String(value);
-}
-
-async function api(path, timeout = 90000) {
-  const controller = new AbortController();
-
-  const timer = setTimeout(
-    () => controller.abort(),
-    timeout
-  );
-
-  try {
-    const response = await fetch(
-      API_BASE + path,
-      {
-        method: "GET",
-        cache: "no-store",
-        signal: controller.signal
-      }
-    );
-
-    const data = await response.json().catch(
-      () => ({
-        message: "Server returned invalid JSON"
-      })
-    );
-
-    if (!response.ok) {
-      throw new Error(
-        data.message ||
-        data.error ||
-        `HTTP ${response.status}`
-      );
-    }
-
-    if (
-      data &&
-      String(data.status).toUpperCase() === "ERROR"
-    ) {
-      throw new Error(
-        data.message || "Backend returned ERROR"
-      );
-    }
-
-    return data;
-
-  } finally {
-    clearTimeout(timer);
-  }
-}
-
-function setHealth(ok, text) {
-  $("healthDot").className =
-    "dot " + (ok ? "ok" : "bad");
-
-  $("healthText").textContent = text;
-}
-
-async function checkHealth() {
-  try {
-    const h = await api(API.health, 25000);
-
-    setHealth(
-      true,
-      "Backend LIVE" +
-      (h.tokenConfigured === true
-        ? " • Upstox token configured"
-        : "")
-    );
-
-    if (h.marketTime) {
-      $("marketText").textContent =
-        "Market time: " + h.marketTime;
-    }
-
-  } catch (err) {
-    setHealth(
-      false,
-      "Backend check failed: " + err.message
-    );
-  }
-}
-
-function getSignals(data) {
-  if (Array.isArray(data?.signals)) {
-    return data.signals;
-  }
-
-  if (Array.isArray(data?.data?.signals)) {
-    return data.data.signals;
-  }
-
-  if (Array.isArray(data?.results)) {
-    return data.results;
-  }
-
-  return [];
-}
-
-function signalText(item) {
-  return String(
-    item.signal ??
-    item.signalType ??
-    item.action ??
-    item.direction ??
-    item.classification ??
-    item.type ??
-    ""
-  ).toUpperCase();
-}
-
-// Correct BUY / SELL classification
-// CE / PE are option types, not BUY / SELL actions.
-
-function classify(item) {
-  const s = signalText(item);
-
-  if (
-    s.includes("SELL") ||
-    s.includes("BEAR")
-  ) return "sell";
-
-  if (
-    s.includes("BUY") ||
-    s.includes("BULL")
-  ) return "buy";
-
-  return "other";
-}
-
-function filteredSignals() {
-  const signals = getSignals(latestData);
-
-  return activeView === "all"
-    ? signals
-    : signals.filter(
-        item => classify(item) === activeView
-      );
-}
-
-function renderSummary(data) {
-  const signals = getSignals(data);
-
-  $("mTotal").textContent = fmt(
-    data.totalSignals ??
-    data.count ??
-    signals.length
-  );
-
-  $("mSell").textContent = fmt(
-    signals.filter(
-      x => classify(x) === "sell"
-    ).length
-  );
-
-  $("mBuy").textContent = fmt(
-    signals.filter(
-      x => classify(x) === "buy"
-    ).length
-  );
-
-  if (typeof data.masterLoaded === "boolean") {
-    $("mMaster").textContent =
-      data.masterLoaded ? "YES" : "NO";
-  }
-}
-
-function firstValue(item, keys) {
-  for (const key of keys) {
-    if (
-      item?.[key] !== undefined &&
-      item[key] !== null &&
-      item[key] !== ""
-    ) {
-      return item[key];
-    }
-  }
-
-  return EMPTY;
-}
-
-function signalCard(item) {
-  const kind = classify(item);
-
-  const label = firstValue(
-    item,
-    [
-      "signal",
-      "signalType",
-      "action",
-      "direction",
-      "classification",
-      "type"
-    ]
-  );
-
-  const symbol = firstValue(
-    item,
-    [
-      "symbol",
-      "tradingSymbol",
-      "name",
-      "index",
-      "underlying",
-      "instrument"
-    ]
-  );
-
-  const fields = [
-    ["Price", [
-      "price", "ltp", "lastPrice",
-      "underlyingPrice", "futuresPrice"
-    ]],
-    ["Change %", [
-      "changePercent", "priceChangePercent",
-      "change_pct"
-    ]],
-    ["Strike", [
-      "strikePrice", "strike", "strike_price"
-    ]],
-    ["Option", [
-      "optionType", "instrumentType", "right", "cePe"
-    ]],
-    ["Expiry", [
-      "expiry", "expiryDate"
-    ]],
-    ["Premium", [
-      "premium", "optionLtp",
-      "optionPrice", "entryPremium"
-    ]],
-    ["Entry", [
-      "entry", "entryPrice"
-    ]],
-    ["Stop Loss", [
-      "stopLoss", "sl"
-    ]],
-    ["Target 1", [
-      "target1", "targetPrice1"
-    ]],
-    ["Target 2", [
-      "target2", "targetPrice2"
-    ]],
-    ["RSI", [
-      "rsi", "rsi14"
-    ]],
-    ["VWAP", [
-      "vwap"
-    ]],
-    ["Volume", [
-      "volume", "totalVolume"
-    ]],
-    ["OI", [
-      "oi", "openInterest", "open_interest"
-    ]],
-    ["OI Change %", [
-      "oiChangePercent",
-      "oiChangePct",
-      "oi_change_percent"
-    ]],
-    ["Signal Time", [
-      "signalTime", "candleTime",
-      "timestamp", "time"
-    ]]
-  ];
-
-  const cells = fields.map(
-    ([title, keys]) => {
-      const value = firstValue(item, keys);
-
-      if (value === EMPTY) return "";
-
-      return `
-        <div class="datum">
-          <small>${esc(title)}</small>
-          <b>${esc(value)}</b>
-        </div>
-      `;
-    }
-  ).join("");
-
-  const reason = firstValue(
-    item,
-    [
-      "reason",
-      "message",
-      "description",
-      "confirmation"
-    ]
-  );
-
-  const option =
-    item.option &&
-    typeof item.option === "object"
-      ? `
-        <div class="option">
-          <strong>Option details</strong>
-          <div class="small">
-            ${esc(JSON.stringify(item.option))}
-          </div>
-        </div>
-      `
-      : "";
-
-  return `
-    <article class="stock">
-      <div class="stocktop">
-        <div class="symbol">${esc(symbol)}</div>
-
-        <span class="badge ${
-          kind === "sell"
-            ? "sell"
-            : kind === "buy"
-            ? "buy"
-            : "wait"
-        }">
-          ${esc(label === EMPTY ? kind.toUpperCase() : label)}
-        </span>
-      </div>
-
-      ${
-        reason !== EMPTY
-          ? `<div class="small" style="margin-top:6px">
-              ${esc(reason)}
-            </div>`
-          : ""
-      }
-
-      <div class="data">
-        ${
-          cells ||
-          '<div class="small">Signal received; no additional fields supplied by API.</div>'
-        }
-      </div>
-
-      ${option}
-    </article>
-  `;
-}
-
-function renderSignals() {
-  document.querySelectorAll(".tab").forEach(
-    btn => {
-      btn.classList.toggle(
-        "active",
-        btn.dataset.view === activeView
-      );
-    }
-  );
-
-  const signals = filteredSignals();
-
-  $("results").innerHTML = signals.length
-    ? signals.map(signalCard).join("")
-    : `
-      <div class="empty">
-        No ${esc(activeView)} signals returned in the latest scan.
-      </div>
-    `;
-}
-
-function setBusy(on) {
-  busy = on;
-
-  $("scanBtn").disabled = on;
-
-  $("scanBtn").textContent =
-    on ? "Scanning…" : "↻ Scan Now";
-}
-
-async function runScan(force = true) {
-  if (busy) return;
-
-  setBusy(true);
-  $("message").innerHTML = "";
-
-  try {
-    const data = await api(
-      force ? API.scan : API.scanNormal,
-      120000
-    );
-
-    latestData = data;
-
-    renderSummary(data);
-    renderSignals();
-
-    $("updatedText").textContent =
-      "Last update: " +
-      (
-        data.marketTime ||
-        data.updatedAt ||
-        new Date().toLocaleTimeString("en-IN")
-      );
-
-    $("marketText").textContent =
-      "Market time: " + (data.marketTime || EMPTY);
-
-    $("scanInfo").textContent =
-      `${getSignals(data).length} signals • ${
-        data.status || "Response received"
-      } • ${data.scanner || "Index scanner"}`;
-
-    if (String(data.status).toUpperCase() === "WAITING") {
-      $("message").innerHTML =
-        '<div class="note">Scanner is waiting for market data or candle confirmation.</div>';
-    } else if (data.message) {
-      $("message").innerHTML =
-        `<div class="note">${esc(data.message)}</div>`;
-    }
-
-  } catch (err) {
-    $("message").innerHTML =
-      `<div class="error">Scanner API error: ${
-        esc(err.name === "AbortError"
-          ? "Request timed out"
-          : err.message)
-      }</div>`;
-
-    if (!latestData) {
-      $("results").innerHTML =
-        '<div class="empty">No scanner data loaded. Check the backend response.</div>';
-    }
-
-  } finally {
-    setBusy(false);
-  }
-}
-
-async function refreshMaster() {
-  const btn = $("masterBtn");
-
-  btn.disabled = true;
-  btn.textContent = "Checking…";
-
-  try {
-    const data = await api(API.status, 90000);
-
-    $("mMaster").textContent =
-      data.masterLoaded === true
-        ? "YES"
-        : data.masterLoaded === false
-        ? "NO"
-        : "UNKNOWN";
-
-    $("message").innerHTML =
-      `<div class="note">Backend status received. Master loaded: ${
-        esc(data.masterLoaded ?? "unknown")
-      }.</div>`;
-
-  } catch (err) {
-    $("message").innerHTML =
-      `<div class="error">Status check failed: ${
-        esc(err.message)
-      }</div>`;
-
-  } finally {
-    btn.disabled = false;
-    btn.textContent = "⟳ Check Master Status";
-  }
-}
-
-document.querySelectorAll(".tab").forEach(
-  btn => {
-    btn.addEventListener("click", () => {
-      activeView = btn.dataset.view;
-      renderSignals();
-    });
-  }
+/* SAFE TEXT */
+
+function esc(v){
+return String(v ?? "—").replace(
+/[&<>"']/g,
+c=>({
+"&":"&amp;",
+"<":"&lt;",
+">":"&gt;",
+'"':"&quot;",
+"'":"&#39;"
+}[c])
 );
+}
+
+function fmt(v){
+if(v===null || v===undefined || v==="") return "—";
+
+const n=Number(v);
+
+return Number.isFinite(n)
+?n.toLocaleString("en-IN",{maximumFractionDigits:2})
+:String(v);
+}
+
+/* API REQUEST */
+
+async function api(path,timeout=90000){
+
+const controller=new AbortController();
+
+const timer=setTimeout(
+()=>controller.abort(),timeout
+);
+
+try{
+
+const response=await fetch(
+API_BASE+path,
+{
+method:"GET",
+cache:"no-store",
+signal:controller.signal,
+headers:{"Accept":"application/json"}
+}
+);
+
+const data=await response.json().catch(
+()=>({message:"Invalid JSON from backend"})
+);
+
+if(!response.ok){
+throw new Error(
+data.message || data.error || "HTTP "+response.status
+);
+}
+
+if(String(data.status).toUpperCase()==="ERROR"){
+throw new Error(data.message || "Backend ERROR");
+}
+
+return data;
+
+}finally{
+clearTimeout(timer);
+}
+}
+
+/* HEALTH */
+
+async function checkHealth(){
+
+try{
+
+const h=await api(API.health,25000);
+
+$("dot").className="dot ok";
+
+$("health").textContent=
+"BACKEND LIVE";
+
+if(h.marketTime){
+$("market").textContent=
+"Market: "+h.marketTime;
+}
+
+}catch(e){
+
+$("dot").className="dot bad";
+
+$("health").textContent=
+"BACKEND ERROR: "+e.message;
+}
+}
+
+/* RESPONSE NORMALIZATION */
+
+function getSignals(data){
+
+if(Array.isArray(data?.signals))
+return data.signals;
+
+if(Array.isArray(data?.data?.signals))
+return data.data.signals;
+
+if(Array.isArray(data?.results))
+return data.results;
+
+if(Array.isArray(data?.data?.results))
+return data.data.results;
+
+if(Array.isArray(data?.data))
+return data.data;
+
+return [];
+}
+
+function getSignal(item){
+
+return String(
+item.signal ??
+item.signalType ??
+item.action ??
+item.direction ??
+item.classification ??
+item.type ??
+""
+).toUpperCase().replace(/[\s-]+/g,"_");
+}
+
+/*
+Do not treat CE / PE alone as BUY or SELL.
+BUY_PE and SHORT_BUILDUP are bearish signals.
+BUY_CE and LONG_BUILDUP are bullish signals.
+*/
+
+function classify(item){
+
+const s=getSignal(item);
+
+if(
+s.includes("SHORT_BUILDUP") ||
+s.includes("SHORT_COVERING") === false &&
+s.includes("LONG_UNWINDING") ||
+s.includes("BUY_PE") ||
+s.includes("PE_BUY") ||
+s.includes("PUT_BUY") ||
+s.includes("BEAR") ||
+s.includes("STRONG_SELL") ||
+s==="SELL"
+){
+return "sell";
+}
+
+if(
+s.includes("LONG_BUILDUP") ||
+s.includes("LONG_UNWINDING") === false &&
+s.includes("SHORT_COVERING") ||
+s.includes("BUY_CE") ||
+s.includes("CE_BUY") ||
+s.includes("CALL_BUY") ||
+s.includes("BULL") ||
+s.includes("STRONG_BUY") ||
+s==="BUY"
+){
+return "buy";
+}
+
+if(s.includes("WAIT")) return "other";
+
+if(s.includes("SELL")) return "sell";
+
+if(s.includes("BUY")) return "buy";
+
+return "other";
+}
+
+function buildup(item){
+
+const s=getSignal(item);
+
+if(
+s.includes("SHORT_BUILDUP")
+) return "short";
+
+if(
+s.includes("LONG_BUILDUP")
+) return "long";
+
+return "";
+}
+
+/* FIELD HELPERS */
+
+function first(item,keys){
+
+for(const k of keys){
+
+if(
+item?.[k]!==undefined &&
+item[k]!==null &&
+item[k]!==""
+){
+return item[k];
+}
+}
+
+return "—";
+}
+
+/* SUMMARY */
+
+function renderSummary(data){
+
+const signals=getSignals(data);
+
+const sells=signals.filter(x=>classify(x)==="sell");
+const buys=signals.filter(x=>classify(x)==="buy");
+const waiting=signals.filter(x=>classify(x)==="other");
+
+const shorts=signals.filter(x=>buildup(x)==="short");
+const longs=signals.filter(x=>buildup(x)==="long");
+
+$("total").textContent=fmt(
+data.totalSignals ?? data.count ?? signals.length
+);
+
+$("sell").textContent=fmt(sells.length);
+$("buy").textContent=fmt(buys.length);
+$("waiting").textContent=fmt(waiting.length);
+$("short").textContent=fmt(shorts.length);
+$("long").textContent=fmt(longs.length);
+
+$("master").textContent=
+data.masterLoaded===true?"YES":
+data.masterLoaded===false?"NO":"—";
+
+$("scanStatus").textContent=
+data.status || "RECEIVED";
+}
+
+/* SIGNAL CARDS */
+
+function card(item){
+
+const kind=classify(item);
+const build=buildup(item);
+
+const symbol=first(item,[
+"symbol","tradingSymbol","name",
+"index","underlying","instrument"
+]);
+
+const label=first(item,[
+"signal","signalType","action",
+"direction","classification","type"
+]);
+
+const fields=[
+["Price",["price","ltp","lastPrice","underlyingPrice"]],
+["Change %",["changePercent","priceChangePercent","change_pct"]],
+["Option",["optionType","instrumentType","right","cePe"]],
+["Strike",["strikePrice","strike","strike_price"]],
+["Expiry",["expiry","expiryDate"]],
+["Premium",["premium","optionLtp","optionPrice"]],
+["Entry",["entry","entryPrice"]],
+["Stop Loss",["stopLoss","sl"]],
+["Target 1",["target1","targetPrice1"]],
+["Target 2",["target2","targetPrice2"]],
+["RSI",["rsi","rsi14"]],
+["VWAP",["vwap"]],
+["Volume",["volume","totalVolume"]],
+["Volume Change",["volumeChangePercent","volumeChangePct"]],
+["OI",["oi","openInterest","open_interest"]],
+["OI Change %",["oiChangePercent","oiChangePct","oi_change_percent"]],
+["Signal Time",["signalTime","candleTime","timestamp","time"]]
+];
+
+let cells="";
+
+for(const [name,keys] of fields){
+
+const value=first(item,keys);
+
+if(value==="—") continue;
+
+cells+=`
+<div class="datum">
+<small>${esc(name)}</small>
+<b>${esc(value)}</b>
+</div>
+`;
+}
+
+const reason=first(item,[
+"reason","message","description","confirmation"
+]);
+
+const badgeClass=
+kind==="sell"?"sell":
+kind==="buy"?"buy":"wait";
+
+return `
+<article class="stock">
+
+<div class="stocktop">
+
+<div class="symbol">${esc(symbol)}</div>
+
+<span class="badge ${badgeClass}">
+${esc(label)}
+</span>
+
+</div>
+
+${build?`
+<div class="reason">
+${build==="short"?"SHORT BUILDUP":"LONG BUILDUP"}
+</div>`:""}
+
+${reason!=="—"?`
+<div class="reason">${esc(reason)}</div>
+`:""}
+
+<div class="data">
+${cells || '<div class="small">No additional fields returned.</div>'}
+</div>
+
+</article>
+`;
+}
+
+/* FILTERS */
+
+function filtered(){
+
+const signals=getSignals(latestData);
+
+return signals.filter(item=>{
+
+const kind=classify(item);
+const build=buildup(item);
+
+if(activeView==="all") return true;
+if(activeView==="sell") return kind==="sell";
+if(activeView==="buy") return kind==="buy";
+if(activeView==="short") return build==="short";
+if(activeView==="long") return build==="long";
+if(activeView==="other") return kind==="other";
+
+return true;
+});
+}
+
+function render(){
+
+document.querySelectorAll(".tab").forEach(btn=>{
+btn.classList.toggle(
+"active",
+btn.dataset.view===activeView
+);
+});
+
+const signals=filtered();
+
+$("results").innerHTML=signals.length
+?signals.map(card).join("")
+:`
+<div class="empty">
+No ${esc(activeView)} signals in latest backend response.
+</div>
+`;
+}
+
+/* BUSY STATE */
+
+function setBusy(on){
+
+busy=on;
+
+$("scanBtn").disabled=on;
+
+$("scanBtn").textContent=
+on?"SCANNING...":"↻ SCAN NOW";
+}
+
+/* MAIN SCANNER */
+
+async function runScan(force=true){
+
+if(busy) return;
+
+setBusy(true);
+
+$("message").innerHTML="";
+
+try{
+
+const data=await api(
+force?API.scan:API.normal,
+120000
+);
+
+latestData=data;
+
+renderSummary(data);
+render();
+
+const time=
+data.marketTime ||
+data.updatedAt ||
+new Date().toLocaleTimeString("en-IN");
+
+$("updated").textContent="Updated: "+time;
+
+$("market").textContent=
+"Market: "+(data.marketTime || "—");
+
+const signals=getSignals(data);
+
+$("scanInfo").textContent=
+signals.length+" signals • "+
+(data.scanner || "Index Scanner");
+
+if(
+String(data.status).toUpperCase()==="WAITING"
+){
+
+$("message").innerHTML=
+'<div class="note">Scanner waiting for market data or candle confirmation.</div>';
+
+}else if(data.message){
+
+$("message").innerHTML=
+'<div class="note">'+esc(data.message)+'</div>';
+
+}
+
+}catch(e){
+
+const msg=e.name==="AbortError"
+?"Request timed out"
+:e.message;
+
+$("message").innerHTML=
+'<div class="error">Scanner API error: '+
+esc(msg)+
+'</div>';
+
+$("scanStatus").textContent="ERROR";
+
+}catchDummy: {
+
+}
+
+finally{
+
+setBusy(false);
+
+}
+}
+
+/* MASTER STATUS */
+
+async function refreshMaster(){
+
+const btn=$("statusBtn");
+
+btn.disabled=true;
+btn.textContent="CHECKING...";
+
+try{
+
+const data=await api(API.status,90000);
+
+$("master").textContent=
+data.masterLoaded===true?"YES":
+data.masterLoaded===false?"NO":"UNKNOWN";
+
+$("message").innerHTML=
+'<div class="note">Backend status received. Master loaded: '+
+esc(data.masterLoaded ?? "unknown")+
+'</div>';
+
+}catch(e){
+
+$("message").innerHTML=
+'<div class="error">Status error: '+
+esc(e.message)+
+'</div>';
+
+}finally{
+
+btn.disabled=false;
+btn.textContent="⟳ STATUS";
+
+}
+}
+
+/* EVENTS */
+
+$("scanBtn").addEventListener(
+"click",()=>runScan(true)
+);
+
+$("statusBtn").addEventListener(
+"click",refreshMaster
+);
+
+document.querySelectorAll(".tab").forEach(btn=>{
+
+btn.addEventListener("click",()=>{
+
+activeView=btn.dataset.view;
+
+render();
+
+});
+
+});
+
+/* START */
 
 checkHealth();
 
-setInterval(checkHealth, 60000);
+setInterval(checkHealth,60000);
 
-setInterval(() => {
-  if (!document.hidden && !busy) {
-    runScan(false);
-  }
-}, 30000);
+setInterval(()=>{
+
+if(!document.hidden && !busy){
+runScan(false);
+}
+
+},30000);
 
 document.addEventListener(
-  "visibilitychange",
-  () => {
-    if (!document.hidden && !busy) {
-      checkHealth();
-    }
-  }
+"visibilitychange",
+()=>{
+
+if(!document.hidden && !busy){
+checkHealth();
+}
+
+}
 );
 
 </script>
