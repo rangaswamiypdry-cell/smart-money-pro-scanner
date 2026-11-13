@@ -15,16 +15,6 @@ const API = "https://api.upstox.com";
 const MASTER_URL =
 "https://assets.upstox.com/market-quote/instruments/exchange/complete.json.gz";
 
-// =====================================
-// DEFAULT INDEXES
-// =====================================
-
-const DEFAULT_INDEXES = [
-    "NIFTY",
-    "BANKNIFTY",
-    "SENSEX",
-    "FINNIFTY"
-];
 
 const CONFIG = {
     VERSION: "SMART_MONEY_INDEX_SELL_V2",
