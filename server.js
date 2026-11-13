@@ -1,5 +1,9 @@
-
-"use strict";
+const DEFAULT_INDEXES = [
+    "NIFTY",
+    "BANKNIFTY",
+    "SENSEX",
+    "FINNIFTY"
+];
 
 const http = require("http");
 const zlib = require("zlib");
@@ -175,83 +179,120 @@ async function downloadInstrumentMaster() {
 // INDEX MAPPING
 // =====================================
 
-const INDEX_ALIASES = {
-    NIFTY: ["NIFTY 50", "NIFTY"],
-    BANKNIFTY: ["NIFTY BANK", "BANKNIFTY"],
-    SENSEX: ["SENSEX"],
-    FINNIFTY: ["NIFTY FIN SERVICE", "FINNIFTY"]
-};
+function normalizeExpiry(value) {
+    if (!value) return "";
+
+    const n = Number(value);
+
+    if (Number.isFinite(n) && n > 0) {
+        const ms = n < 1000000000000 ? n * 1000 : n;
+        return new Date(ms).toISOString().slice(0, 10);
+    }
+
+    const d = new Date(value);
+
+    return Number.isNaN(d.getTime())
+        ? ""
+        : d.toISOString().slice(0, 10);
+}
+
+function normalizeSymbol(value) {
+    return String(value || "")
+        .toUpperCase()
+        .replace(/[^A-Z0-9]/g, "");
+}
 
 async function loadIndexMaster() {
-    if (masterLoaded) return;
+    if (masterLoaded && indexMap.length === 4) return;
 
     instrumentMaster = await downloadInstrumentMaster();
 
     const today = istDate();
-    const indexes = [];
+
+    const aliases = {
+        NIFTY: ["NIFTY 50", "NIFTY"],
+        BANKNIFTY: ["NIFTY BANK", "BANKNIFTY"],
+        SENSEX: ["SENSEX"],
+        FINNIFTY: [
+            "NIFTY FIN SERVICE",
+            "NIFTY FINANCIAL SERVICES",
+            "FINNIFTY"
+        ]
+    };
+
+    indexMap = [];
 
     for (const symbol of DEFAULT_INDEXES) {
-        const aliases = INDEX_ALIASES[symbol];
+        const names = aliases[symbol];
 
-        const indexInstrument = instrumentMaster.find(item => {
-            if (
-                !["NSE_INDEX", "BSE_INDEX"].includes(item.segment)
-            ) return false;
+        const segment =
+            symbol === "SENSEX" ? "BSE_INDEX" : "NSE_INDEX";
 
-            const name = String(
-                item.name || item.trading_symbol || ""
-            ).toUpperCase();
+        const foSegment =
+            symbol === "SENSEX" ? "BSE_FO" : "NSE_FO";
 
-            return aliases.some(a =>
-                name === a || name.includes(a)
+        const matches = value => {
+            const text = normalizeSymbol(value);
+            return names.some(name =>
+                text === normalizeSymbol(name)
             );
-        });
+        };
 
-        const futures = instrumentMaster
-            .filter(item => {
-                if (
-                    !["NSE_FO", "BSE_FO"].includes(item.segment) ||
-                    item.instrument_type !== "FUT" ||
-                    !item.instrument_key ||
-                    !item.expiry
-                ) return false;
+        const indexInstrument = instrumentMaster.find(item =>
+            item.segment === segment &&
+            item.instrument_type === "INDEX" &&
+            (
+                matches(item.name) ||
+                matches(item.trading_symbol)
+            )
+        );
 
-                const underlying = String(
-                    item.underlying_symbol || item.name || ""
-                ).toUpperCase();
+        const futures = instrumentMaster.filter(item =>
+            item.segment === foSegment &&
+            item.instrument_type === "FUT" &&
+            item.instrument_key &&
+            (
+                matches(item.underlying_symbol) ||
+                matches(item.name) ||
+                matches(item.trading_symbol)
+            ) &&
+            normalizeExpiry(item.expiry) >= today
+        );
 
-                const matches = aliases.some(a =>
-                    underlying === a ||
-                    underlying.includes(a)
-                );
+        futures.sort((a, b) =>
+            normalizeExpiry(a.expiry).localeCompare(
+                normalizeExpiry(b.expiry)
+            )
+        );
 
-                return matches &&
-                    String(item.expiry).slice(0, 10) >= today;
-            })
-            .sort((a, b) =>
-                String(a.expiry).localeCompare(String(b.expiry))
-            );
+        const future = futures[0];
 
-        if (!indexInstrument || !futures.length) {
-            console.log("[INDEX MISSING]", symbol);
+        if (!indexInstrument || !future) {
+            console.log("[INDEX NOT FOUND]", {
+                symbol,
+                indexFound: Boolean(indexInstrument),
+                futuresFound: futures.length
+            });
             continue;
         }
 
-        indexes.push({
+        indexMap.push({
             symbol,
             indexKey: indexInstrument.instrument_key,
-            futuresKey: futures[0].instrument_key,
-            futuresSymbol: futures[0].trading_symbol,
-            expiry: String(futures[0].expiry).slice(0, 10),
-            lotSize: Number(futures[0].lot_size || 0)
+            futuresKey: future.instrument_key,
+            futuresSymbol: future.trading_symbol,
+            expiry: normalizeExpiry(future.expiry),
+            lotSize: Number(future.lot_size || 0)
         });
+
+        console.log("[INDEX MAPPED]", symbol);
     }
 
-    indexMap = indexes;
-    masterLoaded = true;
+    masterLoaded = indexMap.length === 4;
 
-    console.log("[FOUR INDEXES LOADED]", indexMap);
+    console.log("[INDEX MASTER RESULT]", indexMap);
 }
+
 
 // =====================================
 // 5 MINUTE COMPLETED CANDLES
