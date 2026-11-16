@@ -699,92 +699,97 @@ data.status || "RECEIVED";
 
 function card(item){
 
-const kind=classify(item);
-const build=buildup(item);
+  const option =
+    item.option && typeof item.option === "object"
+      ? item.option
+      : {};
 
-const symbol=first(item,[
-"symbol","tradingSymbol","name",
-"index","underlying","instrument"
-]);
+  const data = {...item, ...option};
 
-const label=first(item,[
-"signal","signalType","action",
-"direction","classification","type"
-]);
+  const kind = classify(data);
+  const build = buildup(data);
 
-const fields=[
-["Price",["price","ltp","lastPrice","underlyingPrice"]],
-["Change %",["changePercent","priceChangePercent","change_pct"]],
-["Option",["optionType","instrumentType","right","cePe"]],
-["Strike",["strikePrice","strike","strike_price"]],
-["Expiry",["expiry","expiryDate"]],
-["Premium",["premium","optionLtp","optionPrice"]],
-["Entry",["entry","entryPrice"]],
-["Stop Loss",["stopLoss","sl"]],
-["Target 1",["target1","targetPrice1"]],
-["Target 2",["target2","targetPrice2"]],
-["RSI",["rsi","rsi14"]],
-["VWAP",["vwap"]],
-["Volume",["volume","totalVolume"]],
-["Volume Change",["volumeChangePercent","volumeChangePct"]],
-["OI",["oi","openInterest","open_interest"]],
-["OI Change %",["oiChangePercent","oiChangePct","oi_change_percent"]],
-["Signal Time",["signalTime","candleTime","timestamp","time"]]
-];
+  const symbol = first(data,[
+    "symbol","tradingSymbol","name",
+    "index","underlying","instrument"
+  ]);
 
-let cells="";
+  const label = first(item,[
+    "signal","signalType","action",
+    "direction","classification","type"
+  ]);
 
-for(const [name,keys] of fields){
+  const fields = [
+    ["INDEX PRICE",["price","ltp","lastPrice","underlyingPrice"]],
+    ["OPTION TYPE",["optionType","right","cePe"]],
+    ["STRIKE PRICE",["strikePrice","strike","strike_price"]],
+    ["EXPIRY",["expiry","expiryDate"]],
+    ["OPTION LTP",["premium","optionLtp","optionPrice","ltp"]],
+    ["ENTRY",["entry","entryPrice"]],
+    ["STOP LOSS",["stopLoss","sl"]],
+    ["TARGET 1",["target1","targetPrice1"]],
+    ["TARGET 2",["target2","targetPrice2"]],
+    ["RSI",["rsi","rsi14"]],
+    ["VWAP",["vwap"]],
+    ["VOLUME",["volume","totalVolume"]],
+    ["OI",["oi","openInterest","open_interest"]],
+    ["OI CHANGE %",["oiChangePercent","oiChangePct"]],
+    ["SIGNAL TIME",["signalTime","candleTime","timestamp","time"]]
+  ];
 
-const value=first(item,keys);
+  let cells = "";
 
-if(value==="—") continue;
+  for(const [name,keys] of fields){
 
-cells+=`
-<div class="datum">
-<small>${esc(name)}</small>
-<b>${esc(value)}</b>
-</div>
-`;
-}
+    const value = first(data,keys);
 
-const reason=first(item,[
-"reason","message","description","confirmation"
-]);
+    if(value === "—") continue;
 
-const badgeClass=
-kind==="sell"?"sell":
-kind==="buy"?"buy":"wait";
+    cells += `
+      <div class="datum">
+        <small>${esc(name)}</small>
+        <b>${esc(fmt(value))}</b>
+      </div>
+    `;
+  }
 
-return `
-<article class="stock">
+  const reason = first(item,[
+    "reason","message","description","confirmation"
+  ]);
 
-<div class="stocktop">
+  const badgeClass =
+    kind === "sell" ? "sell" :
+    kind === "buy" ? "buy" : "wait";
 
-<div class="symbol">${esc(symbol)}</div>
+  return `
+    <article class="stock">
 
-<span class="badge ${badgeClass}">
-${esc(label)}
-</span>
+      <div class="stocktop">
+        <div class="symbol">${esc(symbol)}</div>
+        <span class="badge ${badgeClass}">
+          ${esc(label)}
+        </span>
+      </div>
 
-</div>
+      ${build ? `
+        <div class="reason">
+          ${build === "short" ? "SHORT BUILDUP" : "LONG BUILDUP"}
+        </div>
+      ` : ""}
 
-${build?`
-<div class="reason">
-${build==="short"?"SHORT BUILDUP":"LONG BUILDUP"}
-</div>`:""}
+      <div class="data">
+        ${cells || '<div class="small">Waiting for option data</div>'}
+      </div>
 
-${reason!=="—"?`
-<div class="reason">${esc(reason)}</div>
-`:""}
+      ${reason !== "—" ? `
+        <div class="reason">${esc(reason)}</div>
+      ` : ""}
 
-<div class="data">
-${cells || '<div class="small">No additional fields returned.</div>'}
-</div>
+    </article>
+  `;
+  }
+             
 
-</article>
-`;
-}
 
 /* FILTERS */
 
