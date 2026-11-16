@@ -1,1 +1,21 @@
 
+{
+  "name": "SMART MONEY PRO",
+  "short_name": "Smart Money Pro",
+  "description": "Advanced NSE F&O Index Options Scanner with Smart Money, Very Strong Buy, Very Strong Sell, OI, Volume, RSI and VWAP Signals",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07111f",
+  "theme_color": "#07111f",
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
+
