@@ -1,74 +1,360 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <meta name="theme-color" content="#08111f">
-<title>SMART MONEY PRO - INDEX SELL PRO</title>
+<title>SMART MONEY PRO V9</title>
 
 <style>
-:root{
---bg:#08111f;--panel:#111e32;--panel2:#172740;--line:#293c58;
---text:#edf4ff;--muted:#91a4bd;--green:#19d49a;--red:#ff526d;
---amber:#ffc45b;--blue:#55a7ff;
+:root {
+  --bg:#08111f;
+  --card:#111e32;
+  --tile:#19283d;
+  --line:#293c58;
+  --text:#edf4ff;
+  --muted:#91a4bd;
+  --green:#19d49a;
+  --red:#ff7895;
+  --amber:#ffc45b;
 }
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 system-ui,Arial}
-.wrap{max-width:1250px;margin:auto;padding:15px}
-header{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;padding:15px 0 20px;border-bottom:1px solid var(--line)}
-.brand{display:flex;align-items:center;gap:12px}
-.logo{width:46px;height:46px;border-radius:13px;background:linear-gradient(135deg,#1686ff,#19d49a);display:grid;place-items:center;font-size:20px;font-weight:900;color:#061321}
-h1{font-size:19px;margin:0}h2{font-size:16px;margin:0}
-.sub,.small{color:var(--muted);font-size:12px}
-.actions{display:flex;gap:8px;flex-wrap:wrap}
-button{padding:11px 14px;border:1px solid var(--line);border-radius:10px;background:var(--panel2);color:white;font-weight:700;cursor:pointer}
-button.primary{background:#087e62;border-color:#087e62}
-button:disabled{opacity:.5}
-.status{display:flex;align-items:center;flex-wrap:wrap;gap:10px;padding:13px;margin-top:15px;background:var(--panel);border:1px solid var(--line);border-radius:12px}
-.dot{height:9px;width:9px;border-radius:50%;background:var(--amber)}
-.dot.ok{background:var(--green)}.dot.bad{background:var(--red)}
-.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:11px;margin-top:14px}
-.metric,.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px}
-.metric{padding:15px}
-.label{color:var(--muted);font-size:11px}
-.value{font-size:27px;font-weight:850;margin-top:5px}
-.green{color:var(--green)}.red{color:var(--red)}.amber{color:var(--amber)}.blue{color:var(--blue)}
-.panel{padding:15px;margin-top:14px}
-.panelhead{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px;margin-bottom:13px}
-.tabs{display:flex;gap:7px;overflow-x:auto;padding-bottom:5px}
-.tab{white-space:nowrap;font-size:12px;padding:9px 12px}
-.tab.active{background:#194b76;border-color:#3986c5}
-.cards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px}
-.stock{background:#0b1727;border:1px solid var(--line);border-radius:12px;padding:14px;min-width:0}
-.stocktop{display:flex;justify-content:space-between;align-items:center;gap:8px}
-.symbol{font-size:17px;font-weight:850;overflow-wrap:anywhere}
-.badge{font-size:10px;font-weight:850;padding:5px 9px;border-radius:20px;background:#34435a}
-.badge.sell{background:#542331;color:#ff9baa}.badge.buy{background:#0c4737;color:#6ff0bc}.badge.wait{background:#493b1b;color:#ffd77d}
-.data{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:13px}
-.datum{background:#14243a;border-radius:8px;padding:9px;min-width:0;overflow-wrap:anywhere}
-.datum small{display:block;color:var(--muted);font-size:10px}.datum b{font-size:12px}
-.reason{margin-top:10px;color:#a9c7e7;font-size:12px}
-.empty{grid-column:1/-1;padding:28px 12px;text-align:center;color:var(--muted);border:1px dashed var(--line);border-radius:12px}
-.note{padding:11px;background:#10263a;border:1px solid #315b80;border-radius:10px;color:#b9d8f5;font-size:12px}
-.error{padding:11px;background:#351d29;border:1px solid #6b3342;color:#ff9baa;border-radius:10px;overflow-wrap:anywhere}
-.footer{text-align:center;color:var(--muted);padding:25px 5px;font-size:11px}
 
-/* INDEX WATCH */
-.index-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
-.index-card{background:#0b1727;border:1px solid var(--line);border-radius:11px;padding:13px;min-width:0}
-.index-name{font-size:16px;font-weight:850}
-.index-state{font-size:11px;color:var(--green);margin-top:3px}
-.index-detail{font-size:11px;color:var(--muted);margin-top:7px;overflow-wrap:anywhere}
-@media(max-width:800px){
-.grid{grid-template-columns:repeat(2,minmax(0,1fr))}
-.index-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+* {
+  box-sizing:border-box;
 }
-@media(max-width:550px){
-.wrap{padding:10px}
-.cards{grid-template-columns:1fr}
-.data{grid-template-columns:repeat(2,minmax(0,1fr))}
-h1{font-size:16px}
-.value{font-size:23px}
+
+body {
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial,system-ui,sans-serif;
+}
+
+.wrap {
+  max-width:1100px;
+  margin:auto;
+  padding:14px;
+}
+
+header {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:12px;
+  padding:12px 0 18px;
+  border-bottom:1px solid var(--line);
+}
+
+h1 {
+  font-size:20px;
+  margin:0;
+}
+
+h2 {
+  font-size:17px;
+  margin:0;
+}
+
+.sub {
+  color:var(--muted);
+  font-size:11px;
+  margin-top:5px;
+}
+
+button {
+  border:1px solid var(--line);
+  border-radius:9px;
+  padding:10px 14px;
+  color:white;
+  background:#17304b;
+  font-weight:bold;
+}
+
+button.primary {
+  background:#087e62;
+}
+
+.status {
+  margin-top:13px;
+  padding:12px;
+  border:1px solid var(--line);
+  background:var(--card);
+  border-radius:11px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:9px;
+  font-size:12px;
+}
+
+.dot {
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:var(--amber);
+  display:inline-block;
+}
+
+.dot.online {
+  background:var(--green);
+}
+
+.dot.offline {
+  background:#ff526d;
+}
+
+.section {
+  margin-top:20px;
+}
+
+.section-title {
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  flex-wrap:wrap;
+  gap:8px;
+  margin-bottom:12px;
+}
+
+.small {
+  color:var(--muted);
+  font-size:11px;
+}
+
+/* FOUR INDEX CARDS */
+
+.index-grid {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px;
+}
+
+.index-card {
+  background:linear-gradient(160deg,#122138,#0e1b2d);
+  border:2px solid var(--line);
+  border-radius:22px;
+  padding:17px 14px;
+  min-width:0;
+}
+
+.index-name {
+  font-size:19px;
+  font-weight:900;
+}
+
+.price {
+  font-size:30px;
+  font-weight:900;
+  margin:13px 0 8px;
+  overflow-wrap:anywhere;
+}
+
+.signal {
+  display:inline-block;
+  padding:7px 16px;
+  border-radius:22px;
+  font-size:15px;
+  font-weight:900;
+  background:#493b1b;
+  color:#ffd77d;
+}
+
+.signal.sell {
+  background:#542331;
+  color:#ff9baa;
+}
+
+.signal.buy {
+  background:#0c4737;
+  color:#6ff0bc;
+}
+
+.metrics {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:17px;
+}
+
+.metric {
+  min-width:0;
+  min-height:91px;
+  padding:12px;
+  border-radius:15px;
+  background:var(--tile);
+  overflow-wrap:anywhere;
+}
+
+.metric-label {
+  color:var(--muted);
+  font-size:14px;
+}
+
+.metric-value {
+  font-size:19px;
+  font-weight:900;
+  margin-top:5px;
+}
+
+.strength {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:9px;
+  margin-top:12px;
+}
+
+.strength .metric {
+  min-height:78px;
+}
+
+.conditions {
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+
+.condition {
+  min-width:0;
+  min-height:76px;
+  padding:10px;
+  border-radius:13px;
+  background:var(--tile);
+  color:var(--red);
+  font-size:13px;
+  overflow-wrap:anywhere;
+}
+
+.condition.pass {
+  color:var(--green);
+}
+
+.condition .mark {
+  font-size:17px;
+  font-weight:900;
+  margin-right:4px;
+}
+
+.condition-name {
+  display:block;
+  margin-top:5px;
+}
+
+/* OPTION SIGNALS */
+
+.signal-list {
+  display:grid;
+  grid-template-columns:1fr;
+  gap:10px;
+}
+
+.option-card {
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:15px;
+  padding:14px;
+}
+
+.option-head {
+  display:flex;
+  justify-content:space-between;
+  gap:8px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+
+.option-symbol {
+  font-size:17px;
+  font-weight:900;
+}
+
+.option-badge {
+  background:#542331;
+  color:#ff9baa;
+  border-radius:20px;
+  padding:6px 11px;
+  font-size:11px;
+  font-weight:900;
+}
+
+.option-data {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:8px;
+  margin-top:12px;
+}
+
+.option-data div {
+  background:var(--tile);
+  padding:9px;
+  border-radius:9px;
+  min-width:0;
+  overflow-wrap:anywhere;
+}
+
+.option-data small {
+  display:block;
+  color:var(--muted);
+  font-size:10px;
+}
+
+.option-data b {
+  font-size:13px;
+}
+
+.empty {
+  padding:22px;
+  text-align:center;
+  color:var(--muted);
+  border:1px dashed var(--line);
+  border-radius:12px;
+}
+
+.error {
+  color:#ff9baa;
+  background:#351d29;
+  padding:12px;
+  border-radius:10px;
+  overflow-wrap:anywhere;
+}
+
+.footer {
+  text-align:center;
+  color:var(--muted);
+  font-size:11px;
+  padding:25px 5px;
+}
+
+@media(max-width:390px) {
+  .wrap {
+    padding:9px;
+  }
+
+  .index-card {
+    padding:13px 10px;
+  }
+
+  .price {
+    font-size:24px;
+  }
+
+  .metric {
+    padding:9px;
+  }
+
+  .metric-label {
+    font-size:12px;
+  }
+
+  .metric-value {
+    font-size:17px;
+  }
+
+  .condition {
+    font-size:11px;
+    padding:8px;
+  }
 }
 </style>
 </head>
@@ -77,674 +363,542 @@ h1{font-size:16px}
 <div class="wrap">
 
 <header>
-  <div class="brand">
-    <div class="logo">SM</div>
-    <div>
-      <h1>SMART MONEY PRO V9</h1>
-      <div class="sub">INDEX SELL PRO • NSE • LIVE BACKEND • 5 MIN</div>
+  <div>
+    <h1>SMART MONEY PRO V9</h1>
+    <div class="sub">
+      FOUR INDEX • LIVE FUTURES • 5 MIN SCANNER
     </div>
   </div>
-  <div class="actions">
-    <button id="scanBtn" class="primary">↻ SCAN NOW</button>
-    <button id="statusBtn">⟳ STATUS</button>
+
+  <div>
+    <button class="primary" id="scanBtn">
+      ↻ SCAN NOW
+    </button>
   </div>
 </header>
 
 <div class="status">
-  <span id="dot" class="dot"></span>
-  <b id="health">Connecting Backend...</b><span>•</span>
-  <span id="market">Market: —</span><span>•</span>
-  <span id="updated">Updated: —</span>
+  <span class="dot" id="liveDot"></span>
+  <b id="backendStatus">CONNECTING...</b>
+  <span>•</span>
+  <span id="updated">Updated: --</span>
 </div>
 
-<section class="panel">
-  <div class="panelhead">
-    <h2>INDEX WATCH</h2>
-    <span class="small" id="indexInfo">Loading index configuration...</span>
+<section class="section">
+  <div class="section-title">
+    <h2>INDEX MARKET ANALYSIS</h2>
+    <span class="small" id="indexCount">0 / 4</span>
   </div>
 
-  <div id="indexList" class="index-grid">
-    <div class="index-card">
-      <div class="index-name">NIFTY</div>
-      <div class="index-state">Checking backend...</div>
-    </div>
-    <div class="index-card">
-      <div class="index-name">BANKNIFTY</div>
-      <div class="index-state">Checking backend...</div>
-    </div>
-    <div class="index-card">
-      <div class="index-name">SENSEX</div>
-      <div class="index-state">Checking backend...</div>
-    </div>
-    <div class="index-card">
-      <div class="index-name">FINNIFTY</div>
-      <div class="index-state">Checking backend...</div>
-    </div>
-  </div>
-
-  <div class="small" style="margin-top:10px">
-    Index names show configured instruments only.
-    Live price and BUY/SELL signals appear only when returned by the backend.
+  <div class="index-grid" id="indexGrid">
+    <div class="empty">Loading market data...</div>
   </div>
 </section>
 
-<section class="grid">
-  <div class="metric">
-    <div class="label">TOTAL SIGNALS</div>
-    <div class="value blue" id="total">0</div>
-  </div>
-  <div class="metric">
-    <div class="label">STRONG SELL</div>
-    <div class="value red" id="sell">0</div>
-  </div>
-  <div class="metric">
-    <div class="label">STRONG BUY</div>
-    <div class="value green" id="buy">0</div>
-  </div>
-  <div class="metric">
-    <div class="label">WAITING</div>
-    <div class="value amber" id="waiting">0</div>
-  </div>
-  <div class="metric">
-    <div class="label">LONG BUILDUP</div>
-    <div class="value green" id="long">0</div>
-  </div>
-  <div class="metric">
-    <div class="label">SHORT BUILDUP</div>
-    <div class="value red" id="short">0</div>
-  </div>
-  <div class="metric">
-    <div class="label">MASTER LOADED</div>
-    <div class="value amber" id="master">—</div>
-  </div>
-  <div class="metric">
-    <div class="label">SCAN STATUS</div>
-    <div class="value blue" id="scanStatus">READY</div>
-  </div>
-</section>
-
-<section class="panel">
-  <div class="panelhead">
-    <h2>INDEX SELL PRO SIGNALS</h2>
-    <span class="small" id="scanInfo">Waiting for scan</span>
+<section class="section">
+  <div class="section-title">
+    <h2>STRONG OPTION SELL SIGNALS</h2>
+    <span class="small" id="optionCount">0 Signals</span>
   </div>
 
-  <div class="tabs">
-    <button class="tab active" data-view="all">ALL</button>
-    <button class="tab" data-view="sell">SELL</button>
-    <button class="tab" data-view="buy">BUY</button>
-    <button class="tab" data-view="short">SHORT BUILDUP</button>
-    <button class="tab" data-view="long">LONG BUILDUP</button>
-    <button class="tab" data-view="other">WAITING</button>
-  </div>
-
-  <div id="message" style="margin:12px 0"></div>
-  <div id="results" class="cards">
-    <div class="empty">Press SCAN NOW to load market signals.</div>
-  </div>
-</section>
-
-<section class="panel">
-  <h2>BACKEND CONNECTION</h2>
-  <div class="note" style="margin-top:12px">
-    Backend API:<br><br>
-    <b>/health</b><br>
-    <b>/api/status</b><br>
-    <b>/api/index-sell-scan</b><br><br>
-    Data is requested from your Render server.
-    Only actual API responses are displayed.
-    No automatic orders are placed.
-  </div>
-  <div class="small" style="margin-top:12px">
-    Backend: smart-money-pro-scanner.onrender.com
+  <div class="signal-list" id="optionSignals">
+    <div class="empty">
+      Waiting for option sell signals...
+    </div>
   </div>
 </section>
 
 <div class="footer">
-  SMART MONEY PRO V9 • INDEX SELL PRO
+  SMART MONEY PRO • LIVE API DASHBOARD
   <br>
-  Informational signals only. Trading involves risk.
-</div>
+  Signals are informational. Verify market data before trading.
 </div>
 
 <script>
+  
 "use strict";
 
-/* BACKEND CONFIGURATION */
+/* API CONNECTION */
 
 const API_BASE =
 "https://smart-money-pro-scanner.onrender.com";
 
-const API = {
-  health:"/health",
-  status:"/api/status",
-  scan:"/api/index-sell-scan?force=true",
-  normal:"/api/index-sell-scan"
-};
+const INDEXES = [
+  "NIFTY",
+  "BANKNIFTY",
+  "SENSEX",
+  "FINNIFTY"
+];
+
+let latestResults = [];
+let busy = false;
 
 const $ = id => document.getElementById(id);
 
-let latestData = null;
-let activeView = "all";
-let busy = false;
-
-function esc(v){
-  return String(v ?? "—").replace(/[&<>"']/g,c=>({
-    "&":"&amp;",
-    "<":"&lt;",
-    ">":"&gt;",
-    '"':"&quot;",
-    "'":"&#39;"
-  }[c]));
-}
-
-function fmt(v){
-  if(v===null || v===undefined || v==="") return "—";
-  const n=Number(v);
-  return Number.isFinite(n)
-    ? n.toLocaleString("en-IN",{maximumFractionDigits:2})
-    : String(v);
-}
-
-async function api(path,timeout=90000){
-  const controller=new AbortController();
-  const timer=setTimeout(()=>controller.abort(),timeout);
-
-  try{
-    const response=await fetch(API_BASE+path,{
-      method:"GET",
-      cache:"no-store",
-      signal:controller.signal,
-      headers:{"Accept":"application/json"}
-    });
-
-    const data=await response.json().catch(
-      ()=>({message:"Invalid JSON from backend"})
-    );
-
-    if(!response.ok){
-      throw new Error(
-        data.message || data.error || "HTTP "+response.status
-      );
+async function getAPI(path) {
+  const response = await fetch(API_BASE + path, {
+    method: "GET",
+    cache: "no-store",
+    headers: {
+      "Accept": "application/json"
     }
+  });
 
-    if(String(data.status).toUpperCase()==="ERROR"){
-      throw new Error(data.message || "Backend ERROR");
-    }
+  const data = await response.json();
 
-    return data;
-
-  }finally{
-    clearTimeout(timer);
+  if (!response.ok) {
+    throw new Error(data.message || "API error " + response.status);
   }
+
+  return data;
 }
 
-/* RENDER FOUR INDEXES */
+function number(value) {
+  if (value === null || value === undefined || value === "") {
+    return "--";
+  }
 
-function renderIndexes(data){
-  const expected=[
-    "NIFTY",
-    "BANKNIFTY",
-    "SENSEX",
-    "FINNIFTY"
-  ];
-    const received=Array.isArray(data?.indexes)
-    ? data.indexes
-    : [];
+  const n = Number(value);
 
-  const bySymbol=new Map(
-    received.map(x=>[
-      String(x.symbol || "").toUpperCase(),
-      x
-    ])
-  );
+  return Number.isFinite(n)
+    ? n.toLocaleString("en-IN", {
+        maximumFractionDigits: 2
+      })
+    : "--";
+}
 
-  $("indexList").innerHTML=expected.map(symbol=>{
-    const item=bySymbol.get(symbol);
+function getValue(obj, keys) {
+  for (const key of keys) {
+    if (
+      obj &&
+      obj[key] !== undefined &&
+      obj[key] !== null
+    ) {
+      return obj[key];
+    }
+  }
 
-    const state=item
-      ? "Configured in backend"
-      : "Name shown • config not confirmed";
+  return null;
+}
 
-    const details=item ? [
-      item.futuresSymbol ? "Futures: "+item.futuresSymbol : "",
-      item.expiry ? "Expiry: "+item.expiry : "",
-      item.lotSize ? "Lot: "+item.lotSize : ""
-    ].filter(Boolean).join(" • ")
-    : "Waiting for backend index configuration";
+/* CONDITION DEFINITIONS */
+
+const BEAR_KEYS = [
+  ["priceBelowEMA20", "Price below EMA20"],
+  ["futuresOIIncreasing", "Futures OI increasing"],
+  ["volumeSpike", "Volume spike"],
+  ["rsiBelow45", "RSI weak"],
+  ["priceBelowVWAP", "Below VWAP"],
+  ["bearishBreakdown", "Strong bearish candle"]
+];
+
+const BULL_KEYS = [
+  ["priceAboveEMA20", "Price above EMA20"],
+  ["futuresOIIncreasing", "Futures OI increasing"],
+  ["volumeSpike", "Volume spike"],
+  ["rsiAbove55", "RSI strong"],
+  ["priceAboveVWAP", "Above VWAP"],
+  ["bullishBreakout", "Strong bullish candle"]
+];
+
+/* READ CONDITION VALUES */
+
+function conditionValue(source, key, fallback) {
+  if (source && typeof source[key] === "boolean") {
+    return source[key];
+  }
+
+  if (fallback && typeof fallback[key] === "boolean") {
+    return fallback[key];
+  }
+
+  return false;
+}
+
+function getConditionCount(source, keys, fallback) {
+  return keys.filter(([key]) =>
+    conditionValue(source, key, fallback)
+  ).length;
+}
+
+/* BUILD CONDITION TILES */
+
+function conditionHTML(source, definitions, fallback) {
+  return definitions.map(([key, label]) => {
+    const passed = conditionValue(source, key, fallback);
 
     return `
-      <div class="index-card">
-        <div class="index-name">${esc(symbol)}</div>
-        <div class="index-state">${esc(state)}</div>
-        <div class="index-detail">${esc(details || "Configuration received")}</div>
+      <div class="condition ${passed ? "pass" : ""}">
+        <span class="mark">${passed ? "✓" : "✕"}</span>
+        ${passed ? "Confirmed" : "Not confirmed"}
+        <span class="condition-name">${label}</span>
       </div>
     `;
   }).join("");
-
-  const loaded=received.filter(x=>
-    expected.includes(String(x.symbol || "").toUpperCase())
-  ).length;
-
-  $("indexInfo").textContent=
-    loaded+" / "+expected.length+" index configurations received";
 }
 
-/* HEALTH */
+/* SIGNAL LABEL */
 
-async function checkHealth(){
-  try{
-    const h=await api(API.health,25000);
+function signalLabel(item, bearCount, bullCount) {
+  const direction = String(
+    item.direction || item.signal || "WAIT"
+  ).toUpperCase();
 
-    $("dot").className="dot ok";
-    $("health").textContent="BACKEND LIVE";
-
-    if(h.marketTime){
-      $("market").textContent="Market: "+h.marketTime;
-    }
-
-  }catch(e){
-    $("dot").className="dot bad";
-    $("health").textContent="BACKEND ERROR: "+e.message;
-  }
-}
-
-/* RESPONSE NORMALIZATION */
-
-function getSignals(data){
-  if(Array.isArray(data?.signals)) return data.signals;
-  if(Array.isArray(data?.data?.signals)) return data.data.signals;
-  if(Array.isArray(data?.results)) return data.results;
-  if(Array.isArray(data?.data?.results)) return data.data.results;
-  if(Array.isArray(data?.data)) return data.data;
-  return [];
-}
-
-function getSignal(item){
-  return String(
-    item.signal ??
-    item.signalType ??
-    item.action ??
-    item.direction ??
-    item.classification ??
-    item.type ??
-    ""
-  ).toUpperCase().replace(/[\s-]+/g,"_");
-}
-
-/* EXISTING SIGNAL CLASSIFICATION */
-
-function classify(item){
-  const s=getSignal(item);
-
-  if(
-    s.includes("SHORT_BUILDUP") ||
-    s.includes("SHORT_COVERING") === false &&
-    s.includes("LONG_UNWINDING") ||
-    s.includes("BUY_PE") ||
-    s.includes("PE_BUY") ||
-    s.includes("PUT_BUY") ||
-    s.includes("BEAR") ||
-    s.includes("STRONG_SELL") ||
-    s==="SELL"
-  ){
-    return "sell";
+  if (direction.includes("SELL") ||
+      direction.includes("BEAR")) {
+    return "SELL";
   }
 
-  if(
-    s.includes("LONG_BUILDUP") ||
-    s.includes("LONG_UNWINDING") === false &&
-    s.includes("SHORT_COVERING") ||
-    s.includes("BUY_CE") ||
-    s.includes("CE_BUY") ||
-    s.includes("CALL_BUY") ||
-    s.includes("BULL") ||
-    s.includes("STRONG_BUY") ||
-    s==="BUY"
-  ){
-    return "buy";
+  if (direction.includes("BUY") ||
+      direction.includes("BULL")) {
+    return "BUY";
   }
 
-  if(s.includes("WAIT")) return "other";
-  if(s.includes("SELL")) return "sell";
-  if(s.includes("BUY")) return "buy";
-
-  return "other";
-}
-
-function buildup(item){
-  const s=getSignal(item);
-
-  if(s.includes("SHORT_BUILDUP")) return "short";
-  if(s.includes("LONG_BUILDUP")) return "long";
-
-  return "";
-}
-
-/* FIELD HELPERS */
-
-function first(item,keys){
-  for(const k of keys){
-    if(
-      item?.[k]!==undefined &&
-      item[k]!==null &&
-      item[k]!==""
-    ){
-      return item[k];
-    }
+  if (bearCount >= 4 && bearCount > bullCount) {
+    return "BEARISH";
   }
 
-  return "—";
+  if (bullCount >= 4 && bullCount > bearCount) {
+    return "BULLISH";
+  }
+
+  return "WAIT";
 }
 
-/* SUMMARY */
+/* ONE INDEX CARD */
 
-function renderSummary(data){
-  const signals=getSignals(data);
+function indexCard(item) {
+  const symbol = String(item.symbol || "UNKNOWN").toUpperCase();
 
-  const sells=signals.filter(x=>classify(x)==="sell");
-  const buys=signals.filter(x=>classify(x)==="buy");
-  const waiting=signals.filter(x=>classify(x)==="other");
+  const bear = item.bearishConditions || {};
+  const bull = item.bullishConditions || {};
+  const oldConditions = item.conditions || {};
 
-  const shorts=signals.filter(x=>buildup(x)==="short");
-  const longs=signals.filter(x=>buildup(x)==="long");
-
-  $("total").textContent=fmt(
-    data.totalSignals ?? data.count ?? signals.length
+  const bearCount = getConditionCount(
+    bear,
+    BEAR_KEYS,
+    oldConditions
   );
 
-  $("sell").textContent=fmt(sells.length);
-  $("buy").textContent=fmt(buys.length);
-  $("waiting").textContent=fmt(waiting.length);
-  $("short").textContent=fmt(shorts.length);
-  $("long").textContent=fmt(longs.length);
+  const bullCount = getConditionCount(
+    bull,
+    BULL_KEYS,
+    oldConditions
+  );
 
-  $("master").textContent=
-    data.masterLoaded===true ? "YES" :
-    data.masterLoaded===false ? "NO" : "—";
+  const label = signalLabel(item, bearCount, bullCount);
 
-  $("scanStatus").textContent=data.status || "RECEIVED";
-}
+  const signalClass =
+    label === "SELL" || label === "BEARISH"
+      ? "sell"
+      : label === "BUY" || label === "BULLISH"
+      ? "buy"
+      : "";
 
-/* SIGNAL CARDS */
-
-function card(item){
-  const option=
-    item.option && typeof item.option==="object"
-      ? item.option
-      : {};
-
-  const data={...item,...option};
-
-  const kind=classify(data);
-  const build=buildup(data);
-
-  const symbol=first(data,[
-    "symbol","tradingSymbol","name",
-    "index","underlying","instrument"
+  const price = getValue(item, [
+    "price",
+    "ltp",
+    "lastPrice"
   ]);
 
-  const label=first(item,[
-    "signal","signalType","action",
-    "direction","classification","type"
+  const rsi = getValue(item, ["rsi"]);
+  const vwap = getValue(item, ["vwap"]);
+  const volume = getValue(item, ["volumeRatio"]);
+  const oi = getValue(item, [
+    "futuresOIChangePercent",
+    "oiChangePercent"
   ]);
-
-  const fields=[
-    ["INDEX PRICE",["price","ltp","lastPrice","underlyingPrice"]],
-    ["OPTION TYPE",["optionType","right","cePe"]],
-    ["STRIKE PRICE",["strikePrice","strike","strike_price"]],
-    ["EXPIRY",["expiry","expiryDate"]],
-    ["OPTION LTP",["premium","optionLtp","optionPrice","ltp"]],
-    ["ENTRY",["entry","entryPrice"]],
-    ["STOP LOSS",["stopLoss","sl"]],
-    ["TARGET 1",["target1","targetPrice1"]],
-    ["TARGET 2",["target2","targetPrice2"]],
-    ["RSI",["rsi","rsi14"]],
-    ["VWAP",["vwap"]],
-    ["VOLUME",["volume","totalVolume"]],
-    ["OI",["oi","openInterest","open_interest"]],
-    ["OI CHANGE %",["oiChangePercent","oiChangePct"]],
-    ["SIGNAL TIME",["signalTime","candleTime","timestamp","time"]]
-  ];
-
-  let cells="";
-
-  for(const [name,keys] of fields){
-    const value=first(data,keys);
-
-    if(value==="—") continue;
-
-    cells+=`
-      <div class="datum">
-        <small>${esc(name)}</small>
-        <b>${esc(fmt(value))}</b>
-      </div>
-    `;
-  }
-
-  const reason=first(item,[
-    "reason","message","description","confirmation"
-  ]);
-
-  const badgeClass=
-    kind==="sell" ? "sell" :
-    kind==="buy" ? "buy" : "wait";
 
   return `
-    <article class="stock">
-      <div class="stocktop">
-        <div class="symbol">${esc(symbol)}</div>
-        <span class="badge ${badgeClass}">
-          ${esc(label)}
-        </span>
-      </div>
+    <article class="index-card">
 
-      ${build ? `
-        <div class="reason">
-          ${build==="short" ? "SHORT BUILDUP" : "LONG BUILDUP"}
+      <div class="index-name">${symbol}</div>
+
+      <div class="price">${number(price)}</div>
+
+      <span class="signal ${signalClass}">
+        ${label}
+      </span>
+
+      <div class="metrics">
+
+        <div class="metric">
+          <div class="metric-label">RSI</div>
+          <div class="metric-value">${number(rsi)}</div>
         </div>
-      ` : ""}
 
-      <div class="data">
-        ${cells || '<div class="small">Waiting for option data</div>'}
+        <div class="metric">
+          <div class="metric-label">VWAP</div>
+          <div class="metric-value">${number(vwap)}</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Volume Ratio</div>
+          <div class="metric-value">${number(volume)}x</div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Futures OI Change</div>
+          <div class="metric-value">${number(oi)}%</div>
+        </div>
+
       </div>
 
-      ${reason!=="—" ? `
-        <div class="reason">${esc(reason)}</div>
-      ` : ""}
+      <div class="strength">
+
+        <div class="metric">
+          <div class="metric-label">Bear Strength</div>
+          <div class="metric-value red">
+            ${bearCount}/6
+          </div>
+        </div>
+
+        <div class="metric">
+          <div class="metric-label">Bull Strength</div>
+          <div class="metric-value green">
+            ${bullCount}/6
+          </div>
+        </div>
+
+      </div>
+
+      <div class="conditions">
+        ${conditionHTML(bear, BEAR_KEYS, oldConditions)}
+      </div>
+
+      <div class="conditions">
+        ${conditionHTML(bull, BULL_KEYS, oldConditions)}
+      </div>
+
     </article>
   `;
 }
 
-/* FILTERS */
+/* RENDER FOUR INDEXES */
 
-function filtered(){
-  const signals=getSignals(latestData);
+function renderIndexes(results) {
+  const bySymbol = new Map(
+    results.map(item => [
+      String(item.symbol || "").toUpperCase(),
+      item
+    ])
+  );
 
-  return signals.filter(item=>{
-    const kind=classify(item);
-    const build=buildup(item);
+  $("indexGrid").innerHTML = INDEXES.map(symbol => {
+    const item = bySymbol.get(symbol);
 
-    if(activeView==="all") return true;
-    if(activeView==="sell") return kind==="sell";
-    if(activeView==="buy") return kind==="buy";
-    if(activeView==="short") return build==="short";
-    if(activeView==="long") return build==="long";
-    if(activeView==="other") return kind==="other";
+    return item
+      ? indexCard(item)
+      : `
+        <article class="index-card">
+          <div class="index-name">${symbol}</div>
+          <div class="price">--</div>
+          <span class="signal">WAIT</span>
+          <div class="empty">No data received from backend</div>
+        </article>
+      `;
+  }).join("");
 
-    return true;
-  });
+  $("indexCount").textContent =
+    results.filter(x =>
+      INDEXES.includes(String(x.symbol || "").toUpperCase())
+    ).length + " / 4";
 }
 
-function render(){
-  document.querySelectorAll(".tab").forEach(btn=>{
-    btn.classList.toggle(
-      "active",
-      btn.dataset.view===activeView
-    );
-  });
+/* OPTION SELL SIGNALS */
 
-  const signals=filtered();
+function optionCard(item) {
+  const option = item.option || {};
+  const data = { ...item, ...option };
 
-  $("results").innerHTML=signals.length
-    ? signals.map(card).join("")
+  const symbol =
+    data.symbol ||
+    data.underlying ||
+    data.index ||
+    "INDEX";
+
+  const optionType =
+    data.optionType ||
+    data.optionSide ||
+    data.side ||
+    "--";
+
+  return `
+    <article class="option-card">
+
+      <div class="option-head">
+        <div class="option-symbol">
+          ${symbol}
+        </div>
+
+        <span class="option-badge">
+          ${optionType} SELL
+        </span>
+      </div>
+
+      <div class="option-data">
+
+        <div>
+          <small>STRIKE</small>
+          <b>${number(data.strikePrice || data.strike)}</b>
+        </div>
+
+        <div>
+          <small>OPTION LTP</small>
+          <b>${number(data.premium || data.ltp)}</b>
+        </div>
+
+        <div>
+          <small>EXPIRY</small>
+          <b>${data.expiry || "--"}</b>
+        </div>
+
+        <div>
+          <small>ENTRY</small>
+          <b>${number(data.entry || data.entryPrice)}</b>
+        </div>
+
+        <div>
+          <small>STOP LOSS</small>
+          <b>${number(data.stopLoss || data.sl)}</b>
+        </div>
+
+        <div>
+          <small>TARGET</small>
+          <b>${number(data.target1 || data.targetPrice)}</b>
+        </div>
+
+      </div>
+    </article>
+  `;
+}
+
+function renderOptions(data) {
+  let signals = [];
+
+  if (Array.isArray(data)) {
+    signals = data;
+  } else if (Array.isArray(data.signals)) {
+    signals = data.signals;
+  } else if (Array.isArray(data.results)) {
+    signals = data.results;
+  } else if (Array.isArray(data.data)) {
+    signals = data.data;
+  }
+
+  signals = signals.filter(item =>
+    item &&
+    (item.option || item.strikePrice || item.strike)
+  );
+
+  $("optionCount").textContent =
+    signals.length + " Signals";
+
+  $("optionSignals").innerHTML = signals.length
+    ? signals.map(optionCard).join("")
     : `
       <div class="empty">
-        No ${esc(activeView)} signals in latest backend response.
+        No strong option sell signals currently.
       </div>
     `;
 }
 
-/* BUSY STATE */
+/* LOAD SCANNER */
 
-function setBusy(on){
-  busy=on;
+async function runScan() {
+  if (busy) return;
 
-  $("scanBtn").disabled=on;
+  busy = true;
+  $("scanBtn").disabled = true;
+  $("scanBtn").textContent = "SCANNING...";
 
-  $("scanBtn").textContent=
-    on ? "SCANNING..." : "↻ SCAN NOW";
-}
-
-/* MAIN SCANNER */
-
-async function runScan(force=true){
-  if(busy) return;
-
-  setBusy(true);
-  $("message").innerHTML="";
-
-  try{
-    const data=await api(
-      force ? API.scan : API.normal,
-      120000
+  try {
+    const data = await getAPI(
+      "/api/index-sell-scan?force=true"
     );
 
-    latestData=data;
+    latestResults = Array.isArray(data.results)
+      ? data.results
+      : [];
 
-    renderSummary(data);
-    render();
+    renderIndexes(latestResults);
 
-    const time=
-      data.marketTime ||
-      data.updatedAt ||
+    $("updated").textContent =
+      "Updated: " +
       new Date().toLocaleTimeString("en-IN");
 
-    $("updated").textContent="Updated: "+time;
+    $("backendStatus").textContent =
+      "BACKEND CONNECTED";
 
-    $("market").textContent=
-      "Market: "+(data.marketTime || "—");
+    $("liveDot").className = "dot online";
 
-    const signals=getSignals(data);
+    /* OPTION SIGNAL API */
 
-    $("scanInfo").textContent=
-      signals.length+" signals • "+
-      (data.scanner || "Index Scanner");
+    try {
+      const optionData = await getAPI(
+        "/api/strong-option-sell"
+      );
 
-    if(String(data.status).toUpperCase()==="WAITING"){
-      $("message").innerHTML=
-        '<div class="note">Scanner waiting for market data or candle confirmation.</div>';
-    }else if(data.message){
-      $("message").innerHTML=
-        '<div class="note">'+esc(data.message)+'</div>';
+      renderOptions(optionData);
+
+    } catch (optionError) {
+      $("optionSignals").innerHTML = `
+        <div class="error">
+          Option API: ${optionError.message}
+        </div>
+      `;
     }
 
-  }catch(e){
-    const msg=e.name==="AbortError"
-      ? "Request timed out"
-      : e.message;
+  } catch (error) {
+    $("backendStatus").textContent = "API ERROR";
+    $("liveDot").className = "dot offline";
 
-    $("message").innerHTML=
-      '<div class="error">Scanner API error: '+
-      esc(msg)+
-      '</div>';
+    $("indexGrid").innerHTML = `
+      <div class="error">
+        ${error.message}
+      </div>
+    `;
 
-    $("scanStatus").textContent="ERROR";
-
-  }finally{
-    setBusy(false);
+  } finally {
+    busy = false;
+    $("scanBtn").disabled = false;
+    $("scanBtn").textContent = "↻ SCAN NOW";
   }
 }
-
-/* MASTER STATUS */
-
-async function refreshMaster(){
-  const btn=$("statusBtn");
-
-  btn.disabled=true;
-  btn.textContent="CHECKING...";
-
-  try{
-    const data=await api(API.status,90000);
-
-    renderIndexes(data);
-
-    $("master").textContent=
-      data.masterLoaded===true ? "YES" :
-      data.masterLoaded===false ? "NO" : "UNKNOWN";
-
-    $("message").innerHTML=
-      '<div class="note">Backend status received. Master loaded: '+
-      esc(data.masterLoaded ?? "unknown")+
-      '</div>';
-
-  }catch(e){
-    $("message").innerHTML=
-      '<div class="error">Status error: '+
-      esc(e.message)+
-      '</div>';
-
-    $("indexInfo").textContent=
-      "Could not refresh index configuration";
-
-  }finally{
-    btn.disabled=false;
-    btn.textContent="⟳ STATUS";
-  }
-}
-
-/* EVENTS */
-
-$("scanBtn").addEventListener(
-  "click",
-  ()=>runScan(true)
-);
-
-$("statusBtn").addEventListener(
-  "click",
-  refreshMaster
-);
-
-document.querySelectorAll(".tab").forEach(btn=>{
-  btn.addEventListener("click",()=>{
-    activeView=btn.dataset.view;
-    render();
-  });
-});
 
 /* START */
 
-checkHealth();
-refreshMaster();
+async function checkBackend() {
+  try {
+    await getAPI("/health");
 
-setInterval(checkHealth,60000);
+    $("backendStatus").textContent =
+      "BACKEND LIVE";
 
-setInterval(()=>{
-  if(!document.hidden && !busy){
-    runScan(false);
+    $("liveDot").className = "dot online";
+
+  } catch (error) {
+    $("backendStatus").textContent =
+      "BACKEND OFFLINE";
+
+    $("liveDot").className = "dot offline";
   }
-},30000);
+}
 
-document.addEventListener(
-  "visibilitychange",
-  ()=>{
-    if(!document.hidden && !busy){
-      checkHealth();
-      refreshMaster();
-    }
+$("scanBtn").addEventListener("click", runScan);
+
+checkBackend();
+runScan();
+
+setInterval(() => {
+  if (!document.hidden && !busy) {
+    runScan();
   }
-);
+}, 30000);
+
+setInterval(checkBackend, 60000);
 
 </script>
+</div>
 </body>
 </html>
