@@ -3,567 +3,297 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta http-equiv="Cache-Control" content="no-cache">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>SMART MONEY PRO V5</title>
-
 <style>
 *{box-sizing:border-box}
-body{
- margin:0;background:#080e1b;color:#f4f7ff;
- font-family:Arial,sans-serif
-}
-header{
- background:#111e34;padding:22px 12px;
- text-align:center;border-bottom:2px solid #243c5b
-}
-h1{color:#43d9ad;font-size:25px;margin:0}
-.sub{color:#a8b7cc;margin-top:10px;font-size:14px}
-.status,.section{
- background:#16243a;margin:14px;padding:17px;
- border-radius:15px;border:1px solid #263b59
-}
-h2{color:#51c9f5;font-size:20px}
-button{
- background:#128d70;color:white;border:0;
- padding:13px 17px;border-radius:9px;
- font-weight:bold;margin:5px;font-size:14px
-}
-button:disabled{opacity:.5}
-.index{
- background:#101d32;border:1px solid #304663;
- border-radius:12px;padding:14px;margin:13px 0
-}
-.name{color:#55cdf8;font-size:22px;font-weight:bold}
-.price{font-size:30px;font-weight:bold;margin:13px 0}
-.line{
- display:flex;justify-content:space-between;
- gap:8px;padding:10px 0;
- border-bottom:1px solid #30405a;font-size:14px
-}
-.pass{color:#36dbac;font-weight:bold}
-.fail{color:#ff647d;font-weight:bold}
-.wait{color:#ffd15c;font-weight:bold}
-.signal{
- background:#202f47;padding:14px;
- border-radius:10px;text-align:center;
- margin:12px 0;font-weight:bold
-}
-.small{color:#aab8cd;font-size:12px;line-height:1.8}
-.news{line-height:1.8;font-size:14px}
-summary{color:#51c9f5;padding:12px}
-footer{text-align:center;padding:24px;color:#8494ad}
+body{margin:0;background:#080d18;color:#e8eefc;font-family:Arial,sans-serif}
+header{padding:16px;background:#111c30;border-bottom:1px solid #263653}
+h2{margin:0;color:#42d9ff}
+.sub{color:#9aabc5;font-size:12px;margin-top:6px}
+.wrap{padding:12px;max-width:1200px;margin:auto}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+input,button{padding:11px;border-radius:7px;border:1px solid #344665;background:#14223a;color:white}
+button{background:#087cbd;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.card{background:#111c30;border:1px solid #263653;border-radius:10px;padding:13px;margin-bottom:10px}
+.card h3{margin:0 0 10px;color:#42d9ff}
+.price{font-size:22px;font-weight:bold}
+.green{color:#16df91}
+.red{color:#ff5268}
+.yellow{color:#ffce58}
+.muted{color:#91a2bd;font-size:12px}
+.signal{border-left:4px solid #16df91}
+.badSignal{border-left:4px solid #ff5268}
+.condition{display:flex;justify-content:space-between;padding:7px 0;border-bottom:1px solid #263653;font-size:13px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+td,th{padding:9px 5px;border-bottom:1px solid #263653;text-align:left}
+th{color:#42d9ff}
+.section{margin-top:18px}
+.status{font-size:12px;margin-top:8px}
+.news{padding:9px 0;border-bottom:1px solid #263653;font-size:13px}
+@media(max-width:600px){.grid{grid-template-columns:1fr}table{font-size:11px}}
 </style>
 </head>
-
 <body>
-
 <header>
-<h1>SMART MONEY PRO V5</h1>
-<div class="sub">LIVE FOUR INDEX FUTURES | CE / PE OPTIONS SCANNER</div>
-<div class="sub">5 MIN COMPLETED CANDLE ANALYSIS</div>
+<h2>⚡ SMART MONEY PRO V5</h2>
+<div class="sub">FOUR INDEX CE / PE OPTIONS SCANNER</div>
+<div class="status" id="connection">Connecting to server...</div>
 </header>
 
-<div class="status">
- <div>SERVER: <b id="server" class="wait">CONNECTING...</b></div>
- <div>LAST UPDATE: <b id="updated">--</b></div>
- <div>LAST SCAN: <b id="scanTime">--</b></div>
- <div>VERSION: <b id="version">--</b></div>
- <div>AUTO REFRESH: 15 SECONDS</div>
+<div class="wrap">
+<div class="toolbar">
+<input id="api" style="flex:1;min-width:220px"
+value="https://YOUR-RENDER-URL.onrender.com"
+placeholder="Render server URL">
+<button onclick="saveURL()">Connect</button>
+<button onclick="refreshAll()">Refresh</button>
+<button onclick="toggleSound()" id="soundBtn">Sound: OFF</button>
 </div>
 
-<center>
-<button onclick="loadDashboard()">REFRESH</button>
-<button onclick="runManualScan()" id="scanBtn">SCAN NOW</button>
-<button onclick="toggleAuto()" id="autoBtn">AUTO: ON</button>
-<button onclick="enableSound()">ENABLE SOUND</button>
-</center>
-
-<div class="section">
-<h2>FOUR INDEX FUTURES STATUS</h2>
-<div id="indexes">Loading index data...</div>
+<div class="grid" id="indexes">
+<div class="card">Loading index data...</div>
 </div>
 
 <div class="section">
-<h2>ACTIVE CE / PE SELL SIGNALS</h2>
+<div class="card">
+<h3>🚨 ACTIVE SIGNALS</h3>
 <div id="active">Loading signals...</div>
 </div>
+</div>
 
 <div class="section">
-<h2>LIVE MARKET NEWS</h2>
+<div class="card">
+<h3>📊 LATEST SCAN</h3>
+<div id="scan">Waiting for scan data...</div>
+</div>
+</div>
+
+<div class="section">
+<div class="card">
+<h3>📰 LIVE MARKET NEWS</h3>
 <div id="news">Loading news...</div>
 </div>
-
-<div class="section">
-<h2>SIGNAL HISTORY</h2>
-<div id="history">Loading...</div>
 </div>
 
 <div class="section">
-<h2>SERVER INFORMATION</h2>
-<div id="info">Loading...</div>
+<div class="card">
+<h3>📜 SIGNAL HISTORY</h3>
+<div style="overflow-x:auto">
+<table>
+<thead><tr>
+<th>Time</th><th>Index</th><th>Signal</th>
+<th>Entry</th><th>Status</th>
+</tr></thead>
+<tbody id="history">
+<tr><td colspan="5">Loading history...</td></tr>
+</tbody>
+</table>
 </div>
-
-<footer>SMART MONEY PRO V5 | LIVE DASHBOARD</footer>
+</div>
+</div>
+</div>
 
 <script>
-"use strict";
-
-// Same Render domain
-const API = "";
-
-let autoRefresh = true;
-let timer = null;
-let soundEnabled = false;
-let audioContext = null;
+let BASE = localStorage.getItem("smartMoneyURL") ||
+"https://YOUR-RENDER-URL.onrender.com";
+let soundOn = false;
 let previousSignals = new Set();
-let firstSignalLoad = true;
-let scanBusy = false;
+
+document.getElementById("api").value = BASE;
+
+function saveURL(){
+  BASE = document.getElementById("api").value.trim().replace(/\/$/,"");
+  localStorage.setItem("smartMoneyURL",BASE);
+  refreshAll();
+}
+
+function toggleSound(){
+  soundOn = !soundOn;
+  document.getElementById("soundBtn").textContent =
+    "Sound: " + (soundOn ? "ON" : "OFF");
+}
 
 async function getAPI(path){
- const response = await fetch(API+path,{
-  method:"GET",
-  cache:"no-store"
- });
-
- if(!response.ok){
-  throw new Error(path+" HTTP "+response.status);
- }
-
- return await response.json();
+  const response = await fetch(BASE + path);
+  if(!response.ok) throw new Error("HTTP " + response.status);
+  return await response.json();
 }
 
-async function postScan(){
- const response = await fetch(API+"/api/scan",{
-  method:"GET",
-  cache:"no-store"
- });
-
- const data = await response.json();
-
- if(!response.ok || data.success===false){
-  throw new Error(data.error||data.reason||"SCAN FAILED");
- }
-
- return data;
-}
-
-function esc(v){
- if(v===null || v===undefined || v==="") return "N/A";
-
- return String(v).replace(/[&<>"']/g,c=>({
-  "&":"&amp;",
-  "<":"&lt;",
-  ">":"&gt;",
-  '"':"&quot;",
-  "'":"&#39;"
- })[c]);
-}
-
-function num(v){
- if(v===null || v===undefined || v==="") return "N/A";
-
- const n=Number(v);
- return Number.isFinite(n)?n.toFixed(2):esc(v);
-}
-
-function line(label,value){
- return `<div class="line">
- <span>${esc(label)}</span>
- <b>${esc(value)}</b>
- </div>`;
-}
-
-function conditions(obj){
- if(!obj || typeof obj!=="object"){
-  return "<p class='small'>Conditions unavailable</p>";
- }
-
- const labels={
-  priceAboveEMA20:"Price Above EMA20",
-  rsiAbove55:"RSI Above 55",
-  volumeSpike:"Volume Spike",
-  priceAboveVWAP:"Price Above VWAP",
-  futuresOIIncreasing:"Futures OI Increasing",
-  bullishBreakout:"Bullish Breakout",
-  priceBelowEMA20:"Price Below EMA20",
-  rsiBelow45:"RSI Below 45",
-  priceBelowVWAP:"Price Below VWAP",
-  bearishBreakdown:"Bearish Breakdown"
- };
-
- return Object.entries(obj).map(([key,value])=>`
- <div class="line">
- <span>${esc(labels[key]||key)}</span>
- <b class="${value?'pass':'fail'}">
- ${value?'PASS':'FAIL'}
- </b>
- </div>`).join("");
-}
-
-// FOUR INDEX DISPLAY
-
-function renderIndex(x){
-
- if(!x.success){
-  return `
-  <div class="index">
-  <div class="name">${esc(x.symbol)}</div>
-  <div class="signal wait">WAIT / DATA UNAVAILABLE</div>
-  <p class="small">${esc(x.reason)}</p>
-  </div>`;
- }
-
- const direction=String(x.direction||"WAIT").toUpperCase();
-
- const bearish=direction==="BEARISH"||
-               direction.includes("SELL");
-
- const color=direction==="WAIT"?"wait":
-             bearish?"fail":"pass";
-
- return `
- <div class="index">
-
- <div class="name">${esc(x.symbol)}</div>
-
- <div class="price">${num(x.price)}</div>
-
- ${line("Futures Symbol",x.futuresSymbol)}
- ${line("Direction",direction)}
- ${line("Option Side",x.optionSide)}
- ${line("Strength",x.strength)}
- ${line("Matched Conditions",x.matched+"/"+(x.totalConditions||6))}
- ${line("RSI",num(x.rsi))}
- ${line("EMA20",num(x.ema20))}
- ${line("VWAP",num(x.vwap))}
- ${line("Volume Ratio",x.volumeRatio==null?"N/A":num(x.volumeRatio)+"x")}
- ${line("Futures OI Change",x.futuresOIChangePercent==null?"N/A":num(x.futuresOIChangePercent)+"%")}
- ${line("Futures OI Available",x.futuresOIAvailable?"YES":"NO")}
-
- <div class="signal ${color}">
- ${esc(direction)} - ${esc(x.strength)}
- </div>
-
- <details>
- <summary>BULLISH CONDITIONS</summary>
- ${conditions(x.bullishConditions)}
- </details>
-
- <details>
- <summary>BEARISH CONDITIONS</summary>
- ${conditions(x.bearishConditions)}
- </details>
-
- <p class="small">Candle: ${esc(x.candleTimeIST||x.candleTime)}</p>
- <p class="small">Fetched: ${esc(x.dataFetchedAt)}</p>
- <p class="small">Expiry: ${esc(x.futuresExpiry)}</p>
-
- </div>`;
-}
-
-// SIGNAL SOUND
-
-function playSound(){
- try{
-  if(!audioContext) return;
-
-  const osc=audioContext.createOscillator();
-  const gain=audioContext.createGain();
-
-  osc.connect(gain);
-  gain.connect(audioContext.destination);
-
-  osc.frequency.value=900;
-  gain.gain.value=0.15;
-
-  osc.start();
-  osc.stop(audioContext.currentTime+0.4);
- }catch(e){}
-}
-
-function signalKey(s){
- return String(s.id||s.signalId||
-  [s.symbol,s.optionSide,s.candleTime].join("_"));
-}
-
-// ACTIVE SIGNAL DISPLAY
-
-function renderSignals(response){
-
- const list=Array.isArray(response)?
-  response:
-  Array.isArray(response.data)?response.data:
-  [];
-
- const fresh=new Set(list.map(signalKey));
-
- if(soundEnabled && !firstSignalLoad){
-  for(const key of fresh){
-   if(!previousSignals.has(key)){
-    playSound();
-   }
+function getArray(data){
+  if(Array.isArray(data)) return data;
+  if(!data || typeof data !== "object") return [];
+  for(const key of ["data","results","signals","indexes","items","history","news"]){
+    if(Array.isArray(data[key])) return data[key];
   }
- }
-
- previousSignals=fresh;
- firstSignalLoad=false;
-
- if(!list.length){
-  return "<div class='signal wait'>NO ACTIVE CE / PE SIGNALS</div>";
- }
-
- return list.slice().reverse().map(s=>{
-
-  const o=s.option||{};
-  const bearish=s.optionSide==="CE";
-
-  return `
-  <div class="index">
-
-  <div class="name">${esc(s.symbol)}</div>
-
-  <div class="signal ${bearish?'fail':'pass'}">
-  ${esc(s.signal)}
-  </div>
-
-  ${line("Signal ID",s.id)}
-  ${line("Direction",s.direction)}
-  ${line("Option Side",s.optionSide)}
-  ${line("Strength",s.strength)}
-  ${line("Matched Conditions",s.matchedConditions+"/6")}
-  ${line("Index Price",num(s.indexPrice))}
-  ${line("RSI",num(s.rsi))}
-  ${line("Volume Ratio",s.volumeRatio==null?"N/A":num(s.volumeRatio)+"x")}
-  ${line("VWAP",num(s.vwap))}
-  ${line("Futures OI Change",s.futuresOIChangePercent==null?"N/A":num(s.futuresOIChangePercent)+"%")}
-
-  <h3>OPTION DETAILS</h3>
-
-  ${line("Strike Price",o.strikePrice)}
-  ${line("Expiry",o.expiry)}
-  ${line("Premium",num(o.premium))}
-  ${line("Entry",num(o.entry))}
-  ${line("Stop Loss",num(o.stopLoss))}
-  ${line("Target 1",num(o.target1))}
-  ${line("Target 2",num(o.target2))}
-  ${line("Current Premium",num(s.currentPremium))}
-  ${line("Option OI Change",num(o.optionOIChangePercent)+"%")}
-  ${line("Delta",num(o.delta))}
-  ${line("Spread",num(o.spreadPercent)+"%")}
-  ${line("Target 1 Hit",s.target1Hit?"YES":"NO")}
-  ${line("Signal Status",s.status)}
-  ${line("Signal Time",s.candleTime||s.createdAt)}
-  ${line("Last Quote",s.lastQuoteAt)}
-
-  <details>
-  <summary>VIEW SIX CONDITIONS</summary>
-  ${conditions(s.conditions)}
-  </details>
-
-  <details>
-  <summary>OPTION CONDITIONS</summary>
-  ${conditions(o.optionConditions)}
-  </details>
-
-  </div>`;
- }).join("");
+  return [];
 }
 
-// NEWS
-
-function renderNews(news){
-
- if(!news) return "NEWS NOT AVAILABLE";
-
- const headlines=Array.isArray(news.headlines)?
-  news.headlines:[];
-
- return `
- <p>Status: <b>${esc(news.status)}</b></p>
- <p>Sentiment: <b class="wait">${esc(news.sentiment)}</b></p>
- <p>News Score: ${num(news.score)}</p>
- <p>Good News: ${num(news.goodCount)}</p>
- <p>Bad News: ${num(news.badCount)}</p>
- <h3>HEADLINES</h3>
-
- ${headlines.length?headlines.map(n=>`
- <p>• ${n.link?
- `<a href="${esc(n.link)}" target="_blank" rel="noopener">${esc(n.title)}</a>`:
- esc(n.title)}</p>
- `).join(""):"No fresh news"}
-
- <p class="small">Fetched: ${esc(news.fetchedAt)}</p>
- <p class="small">${esc(news.error||"")}</p>
- `;
+function getName(x){
+  return x.index || x.name || x.symbol || x.underlying || "INDEX";
 }
 
-// HISTORY
-
-async function loadHistory(){
- try{
-  const data=await getAPI("/api/signals/history");
-  const list=Array.isArray(data.data)?data.data:[];
-
-  document.getElementById("history").innerHTML=
-   list.length?
-   list.slice(-15).reverse().map(s=>`
-   <div class="index">
-   <b>${esc(s.symbol)} - ${esc(s.signal)}</b>
-   ${line("Strength",s.strength)}
-   ${line("Strike",s.option?.strikePrice)}
-   ${line("Status",s.status)}
-   ${line("Time",s.candleTime)}
-   </div>`).join(""):
-   "NO SIGNAL HISTORY";
-
- }catch(e){
-  document.getElementById("history").textContent=e.message;
- }
+function getSignal(x){
+  return x.signal || x.type || x.direction || x.action || "NO SIGNAL";
 }
 
-// MAIN DASHBOARD
+function playAlert(){
+  if(!soundOn) return;
+  try{
+    const audio = new (window.AudioContext || window.webkitAudioContext)();
+    const oscillator = audio.createOscillator();
+    const gain = audio.createGain();
+    oscillator.connect(gain);
+    gain.connect(audio.destination);
+    oscillator.frequency.value = 850;
+    gain.gain.value = 0.15;
+    oscillator.start();
+    oscillator.stop(audio.currentTime + 0.35);
+  }catch(e){}
+}
 
-async function loadDashboard(){
+function renderIndexes(data){
+  const items = getArray(data);
+  const root = document.getElementById("indexes");
+  if(!items.length){
+    root.innerHTML = '<div class="card">No index data returned by API.</div>';
+    return;
+  }
+  root.innerHTML = items.map(x=>{
+    const name = getName(x);
+    const price = x.price ?? x.ltp ?? x.lastPrice ?? x.close ?? "--";
+    const signal = getSignal(x);
+    const bullish = /BUY|BULL|UP/i.test(signal);
+    const bearish = /SELL|BEAR|DOWN/i.test(signal);
+    return `<div class="card">
+      <h3>${name}</h3>
+      <div class="price">${price}</div>
+      <p class="${bullish?'green':bearish?'red':'yellow'}">${signal}</p>
+      <div class="muted">RSI: ${x.rsi ?? "--"} | VWAP: ${x.vwap ?? "--"}</div>
+      <div class="muted">Updated: ${x.updatedAt || x.time || "--"}</div>
+    </div>`;
+  }).join("");
+}
 
- try{
+function renderActive(data){
+  const items = getArray(data);
+  const root = document.getElementById("active");
+  if(!items.length){
+    root.innerHTML = "No active signals currently.";
+    return;
+  }
+  root.innerHTML = items.map(x=>{
+    const signal = getSignal(x);
+    const bearish = /SELL|BEAR/i.test(signal);
+    const key = (x.id || "") + getName(x) + signal + (x.entry || "");
+    if(!previousSignals.has(key)){
+      if(previousSignals.size) playAlert();
+      previousSignals.add(key);
+    }
+    return `<div class="card ${bearish?'badSignal':'signal'}">
+      <h3>${getName(x)} — ${signal}</h3>
+      <div>Option: ${x.option || x.optionSymbol || x.tradingSymbol || "--"}</div>
+      <div>Entry: ${x.entry ?? x.entryPrice ?? "--"}</div>
+      <div>Stop Loss: ${x.stopLoss ?? x.sl ?? "--"}</div>
+      <div>Target 1: ${x.target1 ?? "--"} | Target 2: ${x.target2 ?? "--"}</div>
+      <div class="muted">Time: ${x.time || x.timestamp || "--"}</div>
+    </div>`;
+  }).join("");
+}
 
-  const [health,status,latest,signals]=await Promise.all([
-   getAPI("/health"),
-   getAPI("/api/status"),
-   getAPI("/api/scan/latest"),
-   getAPI("/api/signals/active")
+function renderScan(data){
+  const items = getArray(data);
+  const root = document.getElementById("scan");
+  if(!items.length){
+    root.textContent = JSON.stringify(data,null,2);
+    return;
+  }
+  root.innerHTML = items.map(x=>{
+    const conditions = x.conditions || x.checks || {};
+    let rows = "";
+    if(Array.isArray(conditions)){
+      rows = conditions.map((c,i)=>`
+        <div class="condition"><span>${c.name || "Condition "+(i+1)}</span>
+        <b class="${c.met || c.pass ? 'green':'red'}">${c.met || c.pass ? 'PASS':'FAIL'}</b></div>`).join("");
+    }else{
+      rows = Object.entries(conditions).map(([k,v])=>`
+        <div class="condition"><span>${k}</span>
+        <b class="${v===true?'green':v===false?'red':'yellow'}">${typeof v==="object"?JSON.stringify(v):String(v)}</b></div>`).join("");
+    }
+    return `<div class="card">
+      <h3>${getName(x)} — ${getSignal(x)}</h3>
+      <div class="muted">Matched: ${x.matchCount ?? x.matches ?? "--"} / 6</div>
+      ${rows || '<div class="muted">Condition details not provided by API.</div>'}
+    </div>`;
+  }).join("");
+}
+
+function renderNews(data){
+  const items = getArray(data);
+  const root = document.getElementById("news");
+  if(!items.length){
+    root.textContent = "No news data available.";
+    return;
+  }
+  root.innerHTML = items.map(x=>{
+    const type = String(x.type || x.sentiment || x.category || "").toUpperCase();
+    const good = /GOOD|POSITIVE|BULL/i.test(type);
+    const bad = /BAD|NEGATIVE|BEAR/i.test(type);
+    return `<div class="news">
+      <b class="${good?'green':bad?'red':'yellow'}">${type || "NEWS"}</b><br>
+      ${x.title || x.headline || x.text || "News item"}<br>
+      <span class="muted">${x.time || x.publishedAt || ""}</span>
+    </div>`;
+  }).join("");
+}
+
+function renderHistory(data){
+  const items = getArray(data);
+  document.getElementById("history").innerHTML = items.length ?
+    items.map(x=>`<tr>
+      <td>${x.time || x.timestamp || "--"}</td>
+      <td>${getName(x)}</td>
+      <td>${getSignal(x)}</td>
+      <td>${x.entry ?? x.entryPrice ?? "--"}</td>
+      <td>${x.status || "--"}</td>
+    </tr>`).join("") :
+    '<tr><td colspan="5">No signal history.</td></tr>';
+}
+
+async function load(path,render){
+  try{
+    const data = await getAPI(path);
+    render(data);
+    return true;
+  }catch(e){
+    console.error(path,e);
+    return false;
+  }
+}
+
+async function refreshAll(){
+  document.getElementById("connection").textContent = "Checking server...";
+  try{
+    const status = await getAPI("/health");
+    document.getElementById("connection").textContent =
+      "🟢 SERVER CONNECTED — " + (status.status || "ONLINE");
+  }catch(e){
+    document.getElementById("connection").textContent =
+      "🔴 SERVER ERROR — Check Render URL / server";
+  }
+
+  await Promise.all([
+    load("/api/scan",renderIndexes),
+    load("/api/signals/active",renderActive),
+    load("/api/scan/latest",renderScan),
+    load("/api/news",renderNews),
+    load("/api/signals/history",renderHistory)
   ]);
-
-  if(health.success!==true){
-   throw new Error("SERVER HEALTH CHECK FAILED");
-  }
-
-  document.getElementById("server").textContent=
-   "CONNECTED - LIVE";
-
-  document.getElementById("server").className="pass";
-
-  document.getElementById("updated").textContent=
-   new Date().toLocaleString("en-IN");
-
-  document.getElementById("version").textContent=
-   status.version||health.version||"N/A";
-
-  document.getElementById("scanTime").textContent=
-   status.lastScanAt?
-   new Date(status.lastScanAt).toLocaleString("en-IN"):
-   "WAITING FOR FIRST SCAN";
-
-  const results=Array.isArray(latest.results)?
-   latest.results:[];
-
-  document.getElementById("indexes").innerHTML=
-   results.length?
-   results.map(renderIndex).join(""):
-   `<div class="signal wait">
-   WAITING FOR FIRST SCAN<br>
-   ${esc(latest.reason||"Scanner has not completed a scan yet")}
-   </div>`;
-
-  document.getElementById("active").innerHTML=
-   renderSignals(signals);
-
-  document.getElementById("news").innerHTML=
-   renderNews(status.news);
-
-  document.getElementById("info").innerHTML=`
-   ${line("Server Status",health.status)}
-   ${line("Version",status.version)}
-   ${line("Master Loaded",status.masterLoaded?"YES":"NO")}
-   ${line("Scan Running",status.scanRunning?"YES":"NO")}
-   ${line("Mapped Indexes",status.mappedIndexes?.map(x=>x.symbol).join(", "))}
-   ${line("Active Signals",status.activeSignals)}
-   ${line("History Count",status.historyCount)}
-   ${line("Last Scan",status.lastScanAt)}
-   `;
-
-  await loadHistory();
-
- }catch(error){
-
-  document.getElementById("server").textContent=
-   "CONNECTION ERROR";
-
-  document.getElementById("server").className="fail";
-
-  document.getElementById("info").textContent=
-   error.message;
-
-  console.error("DASHBOARD ERROR",error);
- }
 }
 
-// MANUAL SCAN
-
-async function runManualScan(){
-
- if(scanBusy) return;
-
- scanBusy=true;
-
- const btn=document.getElementById("scanBtn");
- btn.disabled=true;
- btn.textContent="SCANNING...";
-
- try{
-  await postScan();
-  await loadDashboard();
- }catch(error){
-  alert("SCAN ERROR: "+error.message);
- }finally{
-  scanBusy=false;
-  btn.disabled=false;
-  btn.textContent="SCAN NOW";
- }
-}
-
-// SOUND
-
-function enableSound(){
- try{
-  audioContext=new(window.AudioContext||
-   window.webkitAudioContext)();
-
-  audioContext.resume();
-  soundEnabled=true;
-  playSound();
-
-  alert("SOUND ALERT ENABLED");
- }catch(e){
-  alert("SOUND NOT AVAILABLE");
- }
-}
-
-// AUTO REFRESH
-
-function toggleAuto(){
-
- autoRefresh=!autoRefresh;
-
- document.getElementById("autoBtn").textContent=
-  "AUTO: "+(autoRefresh?"ON":"OFF");
-
- startAuto();
-}
-
-function startAuto(){
-
- if(timer) clearInterval(timer);
-
- if(autoRefresh){
-  timer=setInterval(loadDashboard,15000);
- }
-}
-
-loadDashboard();
-startAuto();
-
+refreshAll();
+setInterval(refreshAll,15000);
 </script>
 </body>
 </html>
