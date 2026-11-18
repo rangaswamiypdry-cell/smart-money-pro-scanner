@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -19,342 +18,109 @@
   --red:#ff7895;
   --amber:#ffc45b;
 }
-
-* {
-  box-sizing:border-box;
+*{box-sizing:border-box}
+body{
+  margin:0;background:var(--bg);color:var(--text);
+  font-family:Arial,system-ui,sans-serif
 }
-
-body {
-  margin:0;
-  background:var(--bg);
-  color:var(--text);
-  font-family:Arial,system-ui,sans-serif;
+.wrap{max-width:1100px;margin:auto;padding:14px}
+header{
+  display:flex;justify-content:space-between;
+  align-items:center;flex-wrap:wrap;gap:12px;
+  padding:15px 0 20px;border-bottom:1px solid var(--line)
 }
-
-.wrap {
-  max-width:1100px;
-  margin:auto;
-  padding:14px;
+h1{font-size:23px;margin:0}
+h2{font-size:18px;margin:0}
+.sub{color:var(--muted);font-size:12px;margin-top:6px}
+button{
+  border:1px solid var(--line);border-radius:10px;
+  padding:12px 17px;color:white;background:#17304b;
+  font-weight:bold;font-size:14px
 }
-
-header {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:12px;
-  padding:12px 0 18px;
-  border-bottom:1px solid var(--line);
+.primary{background:#087e62}
+.status{
+  margin-top:14px;padding:13px;background:var(--card);
+  border:1px solid var(--line);border-radius:12px;
+  display:flex;flex-wrap:wrap;gap:9px;font-size:12px
 }
-
-h1 {
-  font-size:20px;
-  margin:0;
+.dot{width:9px;height:9px;border-radius:50%;background:var(--amber)}
+.online{background:var(--green)}
+.offline{background:#ff526d}
+.section{margin-top:23px}
+.section-title{
+  display:flex;justify-content:space-between;
+  align-items:center;gap:8px;margin-bottom:13px
 }
-
-h2 {
-  font-size:17px;
-  margin:0;
+.small{color:var(--muted);font-size:12px}
+.index-grid{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:12px
 }
-
-.sub {
-  color:var(--muted);
-  font-size:11px;
-  margin-top:5px;
-}
-
-button {
-  border:1px solid var(--line);
-  border-radius:9px;
-  padding:10px 14px;
-  color:white;
-  background:#17304b;
-  font-weight:bold;
-}
-
-button.primary {
-  background:#087e62;
-}
-
-.status {
-  margin-top:13px;
-  padding:12px;
-  border:1px solid var(--line);
-  background:var(--card);
-  border-radius:11px;
-  display:flex;
-  flex-wrap:wrap;
-  gap:9px;
-  font-size:12px;
-}
-
-.dot {
-  width:9px;
-  height:9px;
-  border-radius:50%;
-  background:var(--amber);
-  display:inline-block;
-}
-
-.dot.online {
-  background:var(--green);
-}
-
-.dot.offline {
-  background:#ff526d;
-}
-
-.section {
-  margin-top:20px;
-}
-
-.section-title {
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  flex-wrap:wrap;
-  gap:8px;
-  margin-bottom:12px;
-}
-
-.small {
-  color:var(--muted);
-  font-size:11px;
-}
-
-/* FOUR INDEX CARDS */
-
-.index-grid {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:12px;
-}
-
-.index-card {
+.index-card{
   background:linear-gradient(160deg,#122138,#0e1b2d);
-  border:2px solid var(--line);
-  border-radius:22px;
-  padding:17px 14px;
-  min-width:0;
+  border:1px solid var(--line);border-radius:17px;
+  padding:15px;min-width:0
 }
-
-.index-name {
-  font-size:19px;
-  font-weight:900;
+.index-name{font-size:20px;font-weight:900}
+.price{font-size:29px;font-weight:900;margin:12px 0}
+.signal{
+  display:inline-block;padding:7px 13px;
+  border-radius:20px;background:#493b1b;
+  color:#ffd77d;font-size:13px;font-weight:900
 }
-
-.price {
-  font-size:30px;
-  font-weight:900;
-  margin:13px 0 8px;
-  overflow-wrap:anywhere;
+.signal.sell{background:#542331;color:#ff9baa}
+.signal.buy{background:#0c4737;color:#6ff0bc}
+.metrics,.strength,.conditions,.option-data{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:8px;margin-top:12px
 }
-
-.signal {
-  display:inline-block;
-  padding:7px 16px;
-  border-radius:22px;
-  font-size:15px;
-  font-weight:900;
-  background:#493b1b;
-  color:#ffd77d;
+.metric{
+  background:var(--tile);padding:10px;
+  border-radius:11px;min-width:0;overflow-wrap:anywhere
 }
-
-.signal.sell {
-  background:#542331;
-  color:#ff9baa;
+.metric-label{font-size:12px;color:var(--muted)}
+.metric-value{font-size:17px;font-weight:900;margin-top:5px}
+.condition{
+  padding:10px;background:var(--tile);
+  border-radius:10px;color:var(--red);
+  font-size:12px;min-height:57px
 }
-
-.signal.buy {
-  background:#0c4737;
-  color:#6ff0bc;
+.condition.pass{color:var(--green)}
+.condition-name{display:block;margin-top:5px}
+.option-card{
+  background:var(--card);border:1px solid var(--line);
+  border-radius:15px;padding:14px
 }
-
-.metrics {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-  margin-top:17px;
+.option-head{
+  display:flex;justify-content:space-between;
+  flex-wrap:wrap;gap:8px
 }
-
-.metric {
-  min-width:0;
-  min-height:91px;
-  padding:12px;
-  border-radius:15px;
-  background:var(--tile);
-  overflow-wrap:anywhere;
+.option-symbol{font-size:17px;font-weight:900}
+.option-badge{
+  background:#542331;color:#ff9baa;
+  padding:6px 11px;border-radius:20px;font-weight:900;
+  font-size:12px
 }
-
-.metric-label {
-  color:var(--muted);
-  font-size:14px;
+.option-data{grid-template-columns:repeat(3,minmax(0,1fr))}
+.option-data div{
+  background:var(--tile);padding:9px;
+  border-radius:9px;overflow-wrap:anywhere
 }
-
-.metric-value {
-  font-size:19px;
-  font-weight:900;
-  margin-top:5px;
+.option-data small{display:block;color:var(--muted);font-size:10px}
+.option-data b{font-size:13px}
+.empty,.error{
+  padding:20px;text-align:center;border-radius:12px;
+  background:var(--card);color:var(--muted)
 }
-
-.strength {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:9px;
-  margin-top:12px;
-}
-
-.strength .metric {
-  min-height:78px;
-}
-
-.conditions {
-  display:grid;
-  grid-template-columns:repeat(2,minmax(0,1fr));
-  gap:8px;
-  margin-top:12px;
-}
-
-.condition {
-  min-width:0;
-  min-height:76px;
-  padding:10px;
-  border-radius:13px;
-  background:var(--tile);
-  color:var(--red);
-  font-size:13px;
-  overflow-wrap:anywhere;
-}
-
-.condition.pass {
-  color:var(--green);
-}
-
-.condition .mark {
-  font-size:17px;
-  font-weight:900;
-  margin-right:4px;
-}
-
-.condition-name {
-  display:block;
-  margin-top:5px;
-}
-
-/* OPTION SIGNALS */
-
-.signal-list {
-  display:grid;
-  grid-template-columns:1fr;
-  gap:10px;
-}
-
-.option-card {
-  background:var(--card);
-  border:1px solid var(--line);
-  border-radius:15px;
-  padding:14px;
-}
-
-.option-head {
-  display:flex;
-  justify-content:space-between;
-  gap:8px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-
-.option-symbol {
-  font-size:17px;
-  font-weight:900;
-}
-
-.option-badge {
-  background:#542331;
-  color:#ff9baa;
-  border-radius:20px;
-  padding:6px 11px;
-  font-size:11px;
-  font-weight:900;
-}
-
-.option-data {
-  display:grid;
-  grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:8px;
-  margin-top:12px;
-}
-
-.option-data div {
-  background:var(--tile);
-  padding:9px;
-  border-radius:9px;
-  min-width:0;
-  overflow-wrap:anywhere;
-}
-
-.option-data small {
-  display:block;
-  color:var(--muted);
-  font-size:10px;
-}
-
-.option-data b {
-  font-size:13px;
-}
-
-.empty {
-  padding:22px;
-  text-align:center;
-  color:var(--muted);
-  border:1px dashed var(--line);
-  border-radius:12px;
-}
-
-.error {
-  color:#ff9baa;
-  background:#351d29;
-  padding:12px;
-  border-radius:10px;
-  overflow-wrap:anywhere;
-}
-
-.footer {
-  text-align:center;
-  color:var(--muted);
-  font-size:11px;
-  padding:25px 5px;
-}
-
-@media(max-width:390px) {
-  .wrap {
-    padding:9px;
-  }
-
-  .index-card {
-    padding:13px 10px;
-  }
-
-  .price {
-    font-size:24px;
-  }
-
-  .metric {
-    padding:9px;
-  }
-
-  .metric-label {
-    font-size:12px;
-  }
-
-  .metric-value {
-    font-size:17px;
-  }
-
-  .condition {
-    font-size:11px;
-    padding:8px;
-  }
+.error{color:var(--red)}
+.footer{text-align:center;color:var(--muted);font-size:11px;padding:25px}
+@media(max-width:390px){
+  .wrap{padding:9px}
+  .index-card{padding:11px}
+  .price{font-size:23px}
+  .metric-value{font-size:15px}
+  .condition{font-size:11px;padding:8px}
+  .option-data{grid-template-columns:repeat(2,minmax(0,1fr))}
 }
 </style>
 </head>
@@ -365,16 +131,9 @@ button.primary {
 <header>
   <div>
     <h1>SMART MONEY PRO V9</h1>
-    <div class="sub">
-      FOUR INDEX • LIVE FUTURES • 5 MIN SCANNER
-    </div>
+    <div class="sub">FOUR INDEX • LIVE FUTURES • 5 MIN SCANNER</div>
   </div>
-
-  <div>
-    <button class="primary" id="scanBtn">
-      ↻ SCAN NOW
-    </button>
-  </div>
+  <button class="primary" id="scanBtn">↻ SCAN NOW</button>
 </header>
 
 <div class="status">
@@ -384,41 +143,55 @@ button.primary {
   <span id="updated">Updated: --</span>
 </div>
 
+<div class="status">
+  <span>VERSION:</span>
+  <b id="version">--</b>
+  <span>•</span>
+  <span>NEWS:</span>
+  <b id="newsStatus">--</b>
+</div>
+
 <section class="section">
   <div class="section-title">
-    <h2>INDEX MARKET ANALYSIS</h2>
+    <h2>INDEX FUTURES ANALYSIS</h2>
     <span class="small" id="indexCount">0 / 4</span>
   </div>
-
   <div class="index-grid" id="indexGrid">
-    <div class="empty">Loading market data...</div>
+    <div class="empty">Loading Futures Data...</div>
   </div>
 </section>
 
 <section class="section">
   <div class="section-title">
-    <h2>STRONG OPTION SELL SIGNALS</h2>
+    <h2>VERY STRONG SELL SIGNALS</h2>
     <span class="small" id="optionCount">0 Signals</span>
   </div>
-
-  <div class="signal-list" id="optionSignals">
-    <div class="empty">
-      Waiting for option sell signals...
-    </div>
+  <div id="optionSignals">
+    <div class="empty">Waiting for 6/6 SELL signals...</div>
   </div>
+</section>
+
+<section class="section">
+  <div class="section-title">
+    <h2>LIVE NEWS</h2>
+    <span class="small" id="newsTime">--</span>
+  </div>
+  <div id="newsBox" class="empty">Loading news...</div>
 </section>
 
 <div class="footer">
-  SMART MONEY PRO • LIVE API DASHBOARD
-  <br>
+  SMART MONEY PRO V9 • LIVE API DASHBOARD<br>
   Signals are informational. Verify market data before trading.
 </div>
 
+</div>
+
 <script>
-  
 "use strict";
 
-/* API CONNECTION */
+/* =====================================
+   BACKEND CONNECTION
+===================================== */
 
 const API_BASE =
 "https://smart-money-pro-scanner.onrender.com";
@@ -430,365 +203,342 @@ const INDEXES = [
   "FINNIFTY"
 ];
 
-let latestResults = [];
 let busy = false;
+let latestResults = [];
+let previousSignalIds = new Set();
 
 const $ = id => document.getElementById(id);
 
 async function getAPI(path) {
   const response = await fetch(API_BASE + path, {
-    method: "GET",
-    cache: "no-store",
-    headers: {
-      "Accept": "application/json"
-    }
+    method:"GET",
+    cache:"no-store",
+    headers:{"Accept":"application/json"}
   });
 
-  const data = await response.json();
+  const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    throw new Error(data.message || "API error " + response.status);
+    throw new Error(
+      data.error || data.message || "HTTP " + response.status
+    );
   }
 
   return data;
 }
 
+/* =====================================
+   SAFE DISPLAY
+===================================== */
+
+function esc(value) {
+  return String(value ?? "--").replace(/[&<>"']/g, ch => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  })[ch]);
+}
+
 function number(value) {
-  if (value === null || value === undefined || value === "") {
+  if(value === null || value === undefined || value === "")
     return "--";
-  }
 
   const n = Number(value);
 
   return Number.isFinite(n)
-    ? n.toLocaleString("en-IN", {
-        maximumFractionDigits: 2
-      })
+    ? n.toLocaleString("en-IN",{maximumFractionDigits:2})
     : "--";
 }
 
-function getValue(obj, keys) {
-  for (const key of keys) {
-    if (
-      obj &&
-      obj[key] !== undefined &&
-      obj[key] !== null
-    ) {
-      return obj[key];
-    }
-  }
+function formatTime(value) {
+  if(!value) return "--";
 
-  return null;
+  const d = new Date(value);
+
+  return Number.isNaN(d.getTime())
+    ? "--"
+    : d.toLocaleString("en-IN",{
+        timeZone:"Asia/Kolkata"
+      });
 }
 
-/* CONDITION DEFINITIONS */
+/* =====================================
+   SIX CONDITIONS
+===================================== */
 
 const BEAR_KEYS = [
-  ["priceBelowEMA20", "Price below EMA20"],
-  ["futuresOIIncreasing", "Futures OI increasing"],
-  ["volumeSpike", "Volume spike"],
-  ["rsiBelow45", "RSI weak"],
-  ["priceBelowVWAP", "Below VWAP"],
-  ["bearishBreakdown", "Strong bearish candle"]
+  ["priceBelowEMA20","Price Below EMA20"],
+  ["futuresOIIncreasing","Futures OI Increasing"],
+  ["volumeSpike","Volume Spike"],
+  ["rsiBelow45","RSI Below 45"],
+  ["priceBelowVWAP","Price Below VWAP"],
+  ["bearishBreakdown","Bearish Breakdown"]
 ];
 
 const BULL_KEYS = [
-  ["priceAboveEMA20", "Price above EMA20"],
-  ["futuresOIIncreasing", "Futures OI increasing"],
-  ["volumeSpike", "Volume spike"],
-  ["rsiAbove55", "RSI strong"],
-  ["priceAboveVWAP", "Above VWAP"],
-  ["bullishBreakout", "Strong bullish candle"]
+  ["priceAboveEMA20","Price Above EMA20"],
+  ["futuresOIIncreasing","Futures OI Increasing"],
+  ["volumeSpike","Volume Spike"],
+  ["rsiAbove55","RSI Above 55"],
+  ["priceAboveVWAP","Price Above VWAP"],
+  ["bullishBreakout","Bullish Breakout"]
 ];
 
-/* READ CONDITION VALUES */
-
-function conditionValue(source, key, fallback) {
-  if (source && typeof source[key] === "boolean") {
-    return source[key];
-  }
-
-  if (fallback && typeof fallback[key] === "boolean") {
-    return fallback[key];
-  }
-
-  return false;
+function conditionCount(obj, keys) {
+  return keys.filter(([key]) => obj && obj[key] === true).length;
 }
 
-function getConditionCount(source, keys, fallback) {
-  return keys.filter(([key]) =>
-    conditionValue(source, key, fallback)
-  ).length;
-}
-
-/* BUILD CONDITION TILES */
-
-function conditionHTML(source, definitions, fallback) {
-  return definitions.map(([key, label]) => {
-    const passed = conditionValue(source, key, fallback);
+function conditionHTML(obj, keys) {
+  return keys.map(([key,label]) => {
+    const pass = obj && obj[key] === true;
 
     return `
-      <div class="condition ${passed ? "pass" : ""}">
-        <span class="mark">${passed ? "✓" : "✕"}</span>
-        ${passed ? "Confirmed" : "Not confirmed"}
-        <span class="condition-name">${label}</span>
+      <div class="condition ${pass ? "pass" : ""}">
+        ${pass ? "✓ CONFIRMED" : "✕ NOT CONFIRMED"}
+        <span class="condition-name">${esc(label)}</span>
       </div>
     `;
   }).join("");
 }
 
-/* SIGNAL LABEL */
-
-function signalLabel(item, bearCount, bullCount) {
-  const direction = String(
-    item.direction || item.signal || "WAIT"
-  ).toUpperCase();
-
-  if (direction.includes("SELL") ||
-      direction.includes("BEAR")) {
-    return "SELL";
-  }
-
-  if (direction.includes("BUY") ||
-      direction.includes("BULL")) {
-    return "BUY";
-  }
-
-  if (bearCount >= 4 && bearCount > bullCount) {
-    return "BEARISH";
-  }
-
-  if (bullCount >= 4 && bullCount > bearCount) {
-    return "BULLISH";
-  }
-
-  return "WAIT";
-}
-
-/* ONE INDEX CARD */
+/* =====================================
+   INDEX FUTURES CARD
+===================================== */
 
 function indexCard(item) {
-  const symbol = String(item.symbol || "UNKNOWN").toUpperCase();
-
   const bear = item.bearishConditions || {};
   const bull = item.bullishConditions || {};
-  const oldConditions = item.conditions || {};
 
-  const bearCount = getConditionCount(
-    bear,
-    BEAR_KEYS,
-    oldConditions
-  );
+  const bearCount = conditionCount(bear,BEAR_KEYS);
+  const bullCount = conditionCount(bull,BULL_KEYS);
 
-  const bullCount = getConditionCount(
-    bull,
-    BULL_KEYS,
-    oldConditions
-  );
+  // Display SELL only at 6/6 bearish.
+  const veryStrongSell =
+    bearCount === 6 &&
+    item.direction === "BEARISH";
 
-  const label = signalLabel(item, bearCount, bullCount);
+  const veryStrongBuy =
+    bullCount === 6 &&
+    item.direction === "BULLISH";
 
-  const signalClass =
-    label === "SELL" || label === "BEARISH"
-      ? "sell"
-      : label === "BUY" || label === "BULLISH"
-      ? "buy"
-      : "";
+  let label = "WAIT";
+  let css = "";
 
-  const price = getValue(item, [
-    "price",
-    "ltp",
-    "lastPrice"
-  ]);
-
-  const rsi = getValue(item, ["rsi"]);
-  const vwap = getValue(item, ["vwap"]);
-  const volume = getValue(item, ["volumeRatio"]);
-  const oi = getValue(item, [
-    "futuresOIChangePercent",
-    "oiChangePercent"
-  ]);
+  if(veryStrongSell) {
+    label = "VERY STRONG SELL";
+    css = "sell";
+  } else if(veryStrongBuy) {
+    label = "VERY STRONG BUY";
+    css = "buy";
+  }
 
   return `
-    <article class="index-card">
+  <article class="index-card">
 
-      <div class="index-name">${symbol}</div>
+    <div class="index-name">${esc(item.symbol)}</div>
 
-      <div class="price">${number(price)}</div>
+    <div class="price">${number(item.price)}</div>
 
-      <span class="signal ${signalClass}">
-        ${label}
-      </span>
+    <span class="signal ${css}">${label}</span>
 
-      <div class="metrics">
+    <div class="metrics">
 
-        <div class="metric">
-          <div class="metric-label">RSI</div>
-          <div class="metric-value">${number(rsi)}</div>
-        </div>
-
-        <div class="metric">
-          <div class="metric-label">VWAP</div>
-          <div class="metric-value">${number(vwap)}</div>
-        </div>
-
-        <div class="metric">
-          <div class="metric-label">Volume Ratio</div>
-          <div class="metric-value">${number(volume)}x</div>
-        </div>
-
-        <div class="metric">
-          <div class="metric-label">Futures OI Change</div>
-          <div class="metric-value">${number(oi)}%</div>
-        </div>
-
+      <div class="metric">
+        <div class="metric-label">RSI (14)</div>
+        <div class="metric-value">${number(item.rsi)}</div>
       </div>
 
-      <div class="strength">
+      <div class="metric">
+        <div class="metric-label">EMA 20</div>
+        <div class="metric-value">${number(item.ema20)}</div>
+      </div>
 
-        <div class="metric">
-          <div class="metric-label">Bear Strength</div>
-          <div class="metric-value red">
-            ${bearCount}/6
-          </div>
+      <div class="metric">
+        <div class="metric-label">VWAP</div>
+        <div class="metric-value">${number(item.vwap)}</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">Volume Ratio</div>
+        <div class="metric-value">${number(item.volumeRatio)}x</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">Futures OI Change</div>
+        <div class="metric-value">${number(item.futuresOIChangePercent)}%</div>
+      </div>
+
+      <div class="metric">
+        <div class="metric-label">OI Available</div>
+        <div class="metric-value">
+          ${item.futuresOIAvailable ? "YES" : "NO"}
         </div>
-
-        <div class="metric">
-          <div class="metric-label">Bull Strength</div>
-          <div class="metric-value green">
-            ${bullCount}/6
-          </div>
-        </div>
-
       </div>
 
-      <div class="conditions">
-        ${conditionHTML(bear, BEAR_KEYS, oldConditions)}
+    </div>
+
+    <div class="strength">
+
+      <div class="metric">
+        <div class="metric-label">Bear Strength</div>
+        <div class="metric-value">${bearCount}/6</div>
       </div>
 
-      <div class="conditions">
-        ${conditionHTML(bull, BULL_KEYS, oldConditions)}
+      <div class="metric">
+        <div class="metric-label">Bull Strength</div>
+        <div class="metric-value">${bullCount}/6</div>
       </div>
 
-    </article>
-  `;
+    </div>
+
+    <h3>BEARISH CONDITIONS</h3>
+    <div class="conditions">
+      ${conditionHTML(bear,BEAR_KEYS)}
+    </div>
+
+    <h3>BULLISH CONDITIONS</h3>
+    <div class="conditions">
+      ${conditionHTML(bull,BULL_KEYS)}
+    </div>
+
+    <div class="small">
+      Futures: ${esc(item.futuresSymbol)}<br>
+      Expiry: ${esc(item.futuresExpiry)}<br>
+      Candle: ${esc(formatTime(item.candleTime))}<br>
+      Fetched: ${esc(formatTime(item.dataFetchedAt))}
+    </div>
+
+  </article>`;
 }
 
-/* RENDER FOUR INDEXES */
+/* =====================================
+   FOUR INDEX DISPLAY
+===================================== */
 
 function renderIndexes(results) {
   const bySymbol = new Map(
-    results.map(item => [
-      String(item.symbol || "").toUpperCase(),
-      item
+    results.map(x => [
+      String(x.symbol || "").toUpperCase(),x
     ])
   );
 
   $("indexGrid").innerHTML = INDEXES.map(symbol => {
     const item = bySymbol.get(symbol);
 
-    return item
-      ? indexCard(item)
-      : `
+    if(!item || !item.success) {
+      return `
         <article class="index-card">
           <div class="index-name">${symbol}</div>
           <div class="price">--</div>
           <span class="signal">WAIT</span>
-          <div class="empty">No data received from backend</div>
-        </article>
-      `;
+          <div class="error">
+            ${esc(item?.reason || "No Futures data")}
+          </div>
+        </article>`;
+    }
+
+    return indexCard(item);
   }).join("");
 
-  $("indexCount").textContent =
-    results.filter(x =>
-      INDEXES.includes(String(x.symbol || "").toUpperCase())
-    ).length + " / 4";
+  const count = results.filter(x =>
+    x.success &&
+    INDEXES.includes(String(x.symbol).toUpperCase())
+  ).length;
+
+  $("indexCount").textContent = count + " / 4";
 }
 
-/* OPTION SELL SIGNALS */
+/* =====================================
+   ACTIVE OPTION SIGNALS
+===================================== */
 
-function optionCard(item) {
-  const option = item.option || {};
-  const data = { ...item, ...option };
-
-  const symbol =
-    data.symbol ||
-    data.underlying ||
-    data.index ||
-    "INDEX";
-
-  const optionType =
-    data.optionType ||
-    data.optionSide ||
-    data.side ||
-    "--";
+function optionCard(signal) {
+  const o = signal.option || {};
 
   return `
-    <article class="option-card">
+  <article class="option-card">
+    <div class="option-head">
+      <div class="option-symbol">
+        ${esc(signal.symbol)} • ${esc(o.strikePrice)}
+      </div>
+      <span class="option-badge">
+        ${esc(o.signal || signal.signal)}
+      </span>
+    </div>
 
-      <div class="option-head">
-        <div class="option-symbol">
-          ${symbol}
-        </div>
+    <div class="option-data">
 
-        <span class="option-badge">
-          ${optionType} SELL
-        </span>
+      <div>
+        <small>STRIKE</small>
+        <b>${number(o.strikePrice)}</b>
       </div>
 
-      <div class="option-data">
-
-        <div>
-          <small>STRIKE</small>
-          <b>${number(data.strikePrice || data.strike)}</b>
-        </div>
-
-        <div>
-          <small>OPTION LTP</small>
-          <b>${number(data.premium || data.ltp)}</b>
-        </div>
-
-        <div>
-          <small>EXPIRY</small>
-          <b>${data.expiry || "--"}</b>
-        </div>
-
-        <div>
-          <small>ENTRY</small>
-          <b>${number(data.entry || data.entryPrice)}</b>
-        </div>
-
-        <div>
-          <small>STOP LOSS</small>
-          <b>${number(data.stopLoss || data.sl)}</b>
-        </div>
-
-        <div>
-          <small>TARGET</small>
-          <b>${number(data.target1 || data.targetPrice)}</b>
-        </div>
-
+      <div>
+        <small>ENTRY</small>
+        <b>${number(o.entry)}</b>
       </div>
-    </article>
-  `;
+
+      <div>
+        <small>PREMIUM</small>
+        <b>${number(o.premium)}</b>
+      </div>
+
+      <div>
+        <small>STOP LOSS</small>
+        <b>${number(o.stopLoss)}</b>
+      </div>
+
+      <div>
+        <small>TARGET 1</small>
+        <b>${number(o.target1)}</b>
+      </div>
+
+      <div>
+        <small>TARGET 2</small>
+        <b>${number(o.target2)}</b>
+      </div>
+
+      <div>
+        <small>EXPIRY</small>
+        <b>${esc(o.expiry)}</b>
+      </div>
+
+      <div>
+        <small>OI CHANGE</small>
+        <b>${number(o.optionOIChangePercent)}%</b>
+      </div>
+
+      <div>
+        <small>STATUS</small>
+        <b>${esc(signal.status)}</b>
+      </div>
+
+    </div>
+
+    <div class="small">
+      Signal ID: ${esc(signal.id)}<br>
+      Created: ${esc(formatTime(signal.createdAt))}
+    </div>
+  </article>`;
 }
 
-function renderOptions(data) {
-  let signals = [];
+function renderOptions(response) {
+  const all = Array.isArray(response.data)
+    ? response.data
+    : [];
 
-  if (Array.isArray(data)) {
-    signals = data;
-  } else if (Array.isArray(data.signals)) {
-    signals = data.signals;
-  } else if (Array.isArray(data.results)) {
-    signals = data.results;
-  } else if (Array.isArray(data.data)) {
-    signals = data.data;
-  }
-
-  signals = signals.filter(item =>
-    item &&
-    (item.option || item.strikePrice || item.strike)
+  // Only 6/6 bearish CE SELL signals shown.
+  const signals = all.filter(s =>
+    s &&
+    s.direction === "BEARISH" &&
+    s.optionSide === "CE" &&
+    Number(s.matchedConditions) === 6 &&
+    s.strength === "VERY STRONG" &&
+    s.option &&
+    s.option.success !== false &&
+    s.status === "ACTIVE"
   );
 
   $("optionCount").textContent =
@@ -796,26 +546,108 @@ function renderOptions(data) {
 
   $("optionSignals").innerHTML = signals.length
     ? signals.map(optionCard).join("")
-    : `
-      <div class="empty">
-        No strong option sell signals currently.
-      </div>
-    `;
+    : `<div class="empty">
+        No active 6/6 VERY STRONG SELL signals.
+       </div>`;
+
+  // Sound alert for newly received signals.
+  for(const s of signals) {
+    const id = String(s.id);
+
+    if(!previousSignalIds.has(id)) {
+      if(previousSignalIds.size > 0) playAlert();
+    }
+  }
+
+  previousSignalIds = new Set(
+    signals.map(s => String(s.id))
+  );
 }
 
-/* LOAD SCANNER */
+/* =====================================
+   SOUND ALERT
+===================================== */
+
+function playAlert() {
+  try {
+    const AudioContext =
+      window.AudioContext || window.webkitAudioContext;
+
+    if(!AudioContext) return;
+
+    const ctx = new AudioContext();
+    const oscillator = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    oscillator.type = "sine";
+    oscillator.frequency.value = 880;
+
+    gain.gain.value = 0.15;
+
+    oscillator.connect(gain);
+    gain.connect(ctx.destination);
+
+    oscillator.start();
+
+    setTimeout(() => {
+      oscillator.stop();
+      ctx.close();
+    },500);
+  } catch(error) {
+    console.log("Sound unavailable",error.message);
+  }
+}
+
+/* =====================================
+   NEWS
+===================================== */
+
+function renderNews(news) {
+  if(!news) return;
+
+  $("newsStatus").textContent =
+    news.status + " / " + news.sentiment;
+
+  $("newsTime").textContent =
+    formatTime(news.fetchedAt);
+
+  const headlines = Array.isArray(news.headlines)
+    ? news.headlines
+    : [];
+
+  $("newsBox").innerHTML = headlines.length
+    ? headlines.map(x => `
+        <div class="metric">
+          ${esc(x.title)}
+          <div class="small">
+            ${esc(formatTime(x.publishedAt))}
+          </div>
+        </div>
+      `).join("")
+    : `<div class="empty">
+        No fresh market news available.
+       </div>`;
+}
+
+/* =====================================
+   MAIN SCANNER
+===================================== */
 
 async function runScan() {
-  if (busy) return;
+  if(busy) return;
 
   busy = true;
   $("scanBtn").disabled = true;
   $("scanBtn").textContent = "SCANNING...";
 
   try {
-    const data = await getAPI(
-      "/api/index-sell-scan?force=true"
-    );
+
+    // API 1: FOUR INDEX FUTURES SCAN
+    const data = await getAPI("/api/scan");
+
+    if(!data.success) {
+      throw new Error(data.reason || "Scanner failed");
+    }
 
     latestResults = Array.isArray(data.results)
       ? data.results
@@ -823,61 +655,63 @@ async function runScan() {
 
     renderIndexes(latestResults);
 
+    $("version").textContent = data.version || "--";
+
     $("updated").textContent =
-      "Updated: " +
-      new Date().toLocaleTimeString("en-IN");
-
-    $("backendStatus").textContent =
-      "BACKEND CONNECTED";
-
-    $("liveDot").className = "dot online";
-
-    /* OPTION SIGNAL API */
-
-    try {
-      const optionData = await getAPI(
-        "/api/strong-option-sell"
-      );
-
-      renderOptions(optionData);
-
-    } catch (optionError) {
-      $("optionSignals").innerHTML = `
-        <div class="error">
-          Option API: ${optionError.message}
-        </div>
-      `;
-    }
-
-  } catch (error) {
-    $("backendStatus").textContent = "API ERROR";
-    $("liveDot").className = "dot offline";
-
-    $("indexGrid").innerHTML = `
-      <div class="error">
-        ${error.message}
-      </div>
-    `;
-
-  } finally {
-    busy = false;
-    $("scanBtn").disabled = false;
-    $("scanBtn").textContent = "↻ SCAN NOW";
-  }
-}
-
-/* START */
-
-async function checkBackend() {
-  try {
-    await getAPI("/health");
+      "Updated: " + formatTime(data.scanTime);
 
     $("backendStatus").textContent =
       "BACKEND LIVE";
 
     $("liveDot").className = "dot online";
 
-  } catch (error) {
+    renderNews(data.news);
+
+    // API 2: ACTIVE OPTION SIGNALS
+    const optionData = await getAPI(
+      "/api/signals/active"
+    );
+
+    renderOptions(optionData);
+
+  } catch(error) {
+
+    $("backendStatus").textContent = "API ERROR";
+    $("liveDot").className = "dot offline";
+
+    $("indexGrid").innerHTML = `
+      <div class="error">
+        ${esc(error.message)}
+      </div>
+    `;
+
+    console.error("[SCANNER ERROR]",error);
+
+  } finally {
+
+    busy = false;
+    $("scanBtn").disabled = false;
+    $("scanBtn").textContent = "↻ SCAN NOW";
+  }
+}
+
+/* =====================================
+   BACKEND HEALTH
+===================================== */
+
+async function checkBackend() {
+  try {
+    const data = await getAPI("/health");
+
+    $("backendStatus").textContent =
+      data.status || "BACKEND LIVE";
+
+    $("liveDot").className = "dot online";
+
+    $("version").textContent =
+      data.version || "--";
+
+  } catch(error) {
     $("backendStatus").textContent =
       "BACKEND OFFLINE";
 
@@ -885,20 +719,23 @@ async function checkBackend() {
   }
 }
 
-$("scanBtn").addEventListener("click", runScan);
+/* =====================================
+   START
+===================================== */
+
+$("scanBtn").addEventListener("click",runScan);
 
 checkBackend();
 runScan();
 
 setInterval(() => {
-  if (!document.hidden && !busy) {
+  if(!document.hidden && !busy) {
     runScan();
   }
-}, 30000);
+},30000);
 
-setInterval(checkBackend, 60000);
+setInterval(checkBackend,60000);
 
 </script>
-</div>
 </body>
 </html>
