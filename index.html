@@ -1,64 +1,60 @@
 
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>SMART MONEY PRO V6</title>
 
 <style>
 *{box-sizing:border-box}
 body{
- margin:0;background:#080e1c;color:#f4f7ff;
- font-family:Arial,sans-serif;
+ margin:0;background:#080e1b;color:#f4f7ff;
+ font-family:Arial,sans-serif
 }
 header{
- background:#111e34;padding:25px 15px;
- text-align:center;border-bottom:2px solid #263b5c;
+ background:#111e34;padding:24px 15px;
+ text-align:center;border-bottom:2px solid #243c5b
 }
-header h1{color:#39d6a0;margin:0;font-size:27px}
-header p{color:#aab8d0;font-size:13px}
-.container{padding:15px;max-width:900px;margin:auto}
-.panel,.index-card{
- background:#16243b;border:1px solid #273c5c;
- border-radius:18px;padding:18px;margin-bottom:18px;
+h1{color:#43d9ad;margin:0;font-size:27px}
+.sub{color:#a8b7cc;margin-top:12px}
+.status{
+ background:#16243c;padding:18px;margin:16px;
+ border-radius:14px;line-height:2
 }
-h2{color:#56caff;font-size:21px}
-.status{line-height:2;color:#dbe4f5}
-.green{color:#38d9a4}
-.red{color:#ff657e}
-.yellow{color:#ffcc61}
 button{
- border:0;border-radius:12px;padding:15px 22px;
- margin:5px;background:#159875;color:white;
- font-size:15px;font-weight:bold;cursor:pointer;
+ background:#128d70;color:white;border:0;
+ padding:14px 20px;border-radius:9px;
+ font-size:15px;font-weight:bold;margin:5px
 }
-button:disabled{opacity:.5}
-.buttons{text-align:center;margin:15px 0}
-.index-card h2{margin:0 0 15px}
-.price{font-size:34px;font-weight:bold;margin:12px 0}
-.futures{color:#aab8d0;font-size:13px;margin-bottom:15px}
+button:active{opacity:.7}
+.section{
+ background:#16243a;margin:16px;padding:18px;
+ border-radius:16px
+}
+h2{color:#51c9f5;font-size:21px}
+.index{
+ border:1px solid #304663;border-radius:13px;
+ padding:16px;margin:14px 0;background:#142139
+}
+.name{color:#55cdf8;font-size:23px;font-weight:bold}
+.price{font-size:31px;font-weight:bold;margin:15px 0}
 .line{
- display:flex;justify-content:space-between;gap:10px;
- padding:12px 0;border-bottom:1px solid #293b56;
- font-size:14px;
+ display:flex;justify-content:space-between;
+ gap:10px;padding:11px 0;
+ border-bottom:1px solid #30405a
 }
-.line strong{text-align:right}
-.signal-box{
- text-align:center;padding:15px;margin-top:15px;
- background:#21334e;border-radius:12px;
- font-weight:bold;font-size:19px;
+.pass{color:#36dbac;font-weight:bold}
+.fail{color:#ff647d;font-weight:bold}
+.wait{color:#ffd15c;font-weight:bold}
+.signal{
+ background:#202f47;padding:14px;
+ border-radius:10px;text-align:center;
+ margin:12px 0;font-weight:bold
 }
-.condition{display:flex;justify-content:space-between;
- padding:10px 0;border-bottom:1px solid #293b56;
- font-size:14px}
-.condition span:last-child{font-weight:bold}
-.news-title{color:#56caff;font-size:22px}
-.news-item{padding:12px 0;border-bottom:1px solid #293b56}
-.small{font-size:12px;color:#9daec8}
-.empty{color:#aab8d0;padding:15px 0}
-footer{text-align:center;color:#8192ad;padding:20px;font-size:12px}
+.small{color:#aab8cd;font-size:13px}
+.news{line-height:1.8}
+footer{text-align:center;padding:25px;color:#8494ad}
 </style>
 </head>
 
@@ -66,287 +62,298 @@ footer{text-align:center;color:#8192ad;padding:20px;font-size:12px}
 
 <header>
 <h1>SMART MONEY PRO V6</h1>
-<p>LIVE FOUR INDEX FUTURES | CE / PE OPTIONS SCANNER</p>
-<p>5 MIN COMPLETED CANDLE ANALYSIS</p>
+<div class="sub">
+LIVE FOUR INDEX FUTURES | CE / PE OPTIONS SCANNER
+</div>
+<div class="sub">5 MIN COMPLETED CANDLE ANALYSIS</div>
 </header>
 
-<div class="container">
-
-<div class="panel">
- <div class="status">
- SERVER: <strong id="serverStatus" class="yellow">CONNECTING...</strong><br>
- LAST UPDATE: <strong id="lastUpdate">--</strong><br>
- AUTO REFRESH: 15 SECONDS<br>
- API STATUS: <strong id="apiStatus">WAITING</strong>
- </div>
+<div class="status">
+<div>SERVER: <span id="server" class="wait">CONNECTING...</span></div>
+<div>LAST UPDATE: <span id="updated">--</span></div>
+<div>AUTO REFRESH: 15 SECONDS</div>
 </div>
 
-<div class="buttons">
- <button onclick="refreshDashboard()">REFRESH</button>
-</div>
+<center>
+<button onclick="loadDashboard()">REFRESH</button>
+<button onclick="toggleAuto()" id="autoBtn">AUTO: ON</button>
+<button onclick="enableSound()">ENABLE SOUND</button>
+</center>
 
-<div class="panel">
+<div class="section">
 <h2>FOUR INDEX FUTURES STATUS</h2>
-<div id="indexCards">
-<div class="empty">Loading four index data...</div>
-</div>
+<div id="indexes">Loading index data...</div>
 </div>
 
-<div class="panel">
-<h2 class="news-title">LIVE MARKET NEWS</h2>
-<div class="line">Status <strong id="newsStatus">--</strong></div>
-<div class="line">Sentiment <strong id="sentiment">--</strong></div>
-<div class="line">News Score <strong id="newsScore">--</strong></div>
-<div class="line">Good News <strong id="goodNews">--</strong></div>
-<div class="line">Bad News <strong id="badNews">--</strong></div>
-<div id="newsHeadlines"></div>
+<div class="section">
+<h2>LIVE MARKET NEWS</h2>
+<div id="news" class="news">Loading news...</div>
 </div>
 
-<div class="panel">
+<div class="section">
 <h2>ACTIVE CE / PE SELL SIGNALS</h2>
-<div id="activeSignals" class="empty">Loading signals...</div>
+<div id="active">Loading active signals...</div>
 </div>
 
-<div class="panel">
+<div class="section">
 <h2>SERVER INFORMATION</h2>
-<div class="line">Version <strong id="version">--</strong></div>
-<div class="line">Master Loaded <strong id="masterLoaded">--</strong></div>
-<div class="line">Scan Running <strong id="scanRunning">--</strong></div>
-<div class="line">Active Signals <strong id="signalCount">0</strong></div>
-<div class="line">History <strong id="historyCount">0</strong></div>
+<div id="info">Loading server information...</div>
 </div>
 
-<footer>
-SMART MONEY PRO V6 | LIVE MARKET DASHBOARD
-<br>Signals are based on completed candle data.
-</footer>
-
-</div>
+<footer>SMART MONEY PRO V6 | LIVE DASHBOARD</footer>
 
 <script>
 "use strict";
 
-const API_BASE = window.location.origin;
+const API = "";
+let autoRefresh = true;
+let timer = null;
+let soundEnabled = false;
+let previousSignals = new Set();
 
 async function getAPI(path){
- const response = await fetch(API_BASE + path,{
-   method:"GET",
-   cache:"no-store",
-   headers:{"Accept":"application/json"}
+ const response = await fetch(API + path,{
+  method:"GET",
+  cache:"no-store"
  });
- if(!response.ok){
-   throw new Error(path+" HTTP "+response.status);
- }
+ if(!response.ok) throw new Error("HTTP "+response.status);
  return await response.json();
 }
 
-function number(value,digits=2){
- const n=Number(value);
- return value===null || value===undefined ||
- !Number.isFinite(n) ? "N/A" : n.toFixed(digits);
+function val(v){
+ return v===null || v===undefined ? "N/A" : v;
 }
 
-function safe(value){
- return value===null || value===undefined ? "N/A" : String(value);
+function number(v){
+ return Number.isFinite(Number(v)) ? Number(v).toFixed(2) : "N/A";
 }
 
-function getArray(data){
- if(Array.isArray(data))return data;
- if(Array.isArray(data?.results))return data.results;
- if(Array.isArray(data?.signals))return data.signals;
- if(Array.isArray(data?.data))return data.data;
- if(Array.isArray(data?.activeSignals))return data.activeSignals;
- return [];
+function line(label,value){
+ return `<div class="line"><span>${label}</span><b>${val(value)}</b></div>`;
 }
 
-const bearishKeys=[
- ["priceBelowEMA20","Price Below EMA20"],
- ["rsiBelow45","RSI Below 45"],
- ["volumeSpike","Volume Spike"],
- ["priceBelowVWAP","Price Below VWAP"],
- ["futuresOIIncreasing","Futures OI Increasing"],
- ["bearishBreakdown","Bearish Breakdown"]
-];
-
-const bullishKeys=[
- ["priceAboveEMA20","Price Above EMA20"],
- ["rsiAbove55","RSI Above 55"],
- ["volumeSpike","Volume Spike"],
- ["priceAboveVWAP","Price Above VWAP"],
- ["futuresOIIncreasing","Futures OI Increasing"],
- ["bullishBreakout","Bullish Breakout"]
-];
-
-function conditionHTML(conditions,keys){
- if(!conditions || typeof conditions!=="object"){
-   return '<div class="empty">Conditions unavailable</div>';
+function conditionList(obj){
+ if(!obj || typeof obj!=="object"){
+  return "<p>Conditions unavailable</p>";
  }
- return keys.map(([key,label])=>{
-   const pass=conditions[key]===true;
-   return `<div class="condition">
-    <span>${label}</span>
-    <span class="${pass?'green':'red'}">
-    ${pass?'PASS':'FAIL'}
-    </span>
-   </div>`;
+ const labels={
+  priceAboveEMA20:"Price Above EMA20",
+  rsiAbove55:"RSI Above 55",
+  volumeSpike:"Volume Spike",
+  priceAboveVWAP:"Price Above VWAP",
+  futuresOIIncreasing:"Futures OI Increasing",
+  bullishBreakout:"Bullish Breakout",
+  priceBelowEMA20:"Price Below EMA20",
+  rsiBelow45:"RSI Below 45",
+  priceBelowVWAP:"Price Below VWAP",
+  bearishBreakdown:"Bearish Breakdown"
+ };
+
+ return Object.entries(obj).map(([key,value])=>{
+  return `<div class="line">
+   <span>${labels[key] || key}</span>
+   <b class="${value ? 'pass':'fail'}">
+    ${value ? 'PASS':'FAIL'}
+   </b>
+  </div>`;
  }).join("");
 }
 
-function createIndexCard(item){
- const symbol=safe(item.symbol);
- const direction=safe(item.direction);
- const isSell=direction==="SELL";
- const isBuy=direction==="BUY";
- const bearish=item.bearishConditions;
- const bullish=item.bullishConditions;
+function renderIndex(x){
+ const bearish=x.bearishConditions || {};
+ const bullish=x.bullishConditions || {};
 
- let conditions=isSell?bearish:(isBuy?bullish:bearish);
- let keys=isBuy?bullishKeys:bearishKeys;
+ const direction=String(x.direction || "WAIT").toUpperCase();
+ const strength=String(x.strength || "WAIT").toUpperCase();
 
- const passed=conditions?
- Object.values(conditions).filter(x=>x===true).length:0;
+ let conditions = direction.includes("SELL") ||
+                  direction.includes("BEAR")
+                  ? bearish : bullish;
 
- const total=item.totalConditions ?? 6;
- const strength=safe(item.strength);
+ if(direction==="WAIT"){
+  conditions = bearish;
+ }
 
- const signalText=
-   isSell && passed===6 && item.futuresOIAvailable===true
-   ? "VERY STRONG SELL"
-   : isBuy && passed===6
-   ? "BUY CONFIRMED"
-   : "WAIT - WAITING";
+ const matched=Object.values(conditions).filter(Boolean).length;
 
  return `
- <div class="index-card">
-  <h2>${symbol}</h2>
-  <div class="price">${number(item.price)}</div>
-  <div class="futures">FUTURES: ${safe(item.futuresSymbol)}</div>
+ <div class="index">
+  <div class="name">${val(x.symbol)}</div>
+  <div class="price">${number(x.price)}</div>
 
-  <div class="line">Direction <strong class="${isSell?'red':isBuy?'green':'yellow'}">${direction}</strong></div>
-  <div class="line">Strength <strong>${strength}</strong></div>
-  <div class="line">Conditions <strong>${conditions?passed+'/'+total:'N/A/6'}</strong></div>
-  <div class="line">RSI <strong>${number(item.rsi)}</strong></div>
-  <div class="line">EMA20 <strong>${number(item.ema20)}</strong></div>
-  <div class="line">VWAP <strong>${number(item.vwap)}</strong></div>
-  <div class="line">Volume Ratio <strong>${number(item.volumeRatio)}x</strong></div>
-  <div class="line">Futures OI Change <strong>${number(item.futuresOIChangePercent)}%</strong></div>
-  <div class="line">Futures OI Available <strong>${item.futuresOIAvailable===true?'YES':'NO'}</strong></div>
+  <div class="small">
+   FUTURES: ${val(x.futuresSymbol)}
+  </div>
 
-  <div class="signal-box yellow">${signalText}</div>
+  ${line("Direction",direction)}
+  ${line("Strength",strength)}
+  ${line("Conditions",matched+"/6")}
+  ${line("RSI",number(x.rsi))}
+  ${line("EMA20",number(x.ema20))}
+  ${line("VWAP",number(x.vwap))}
+  ${line("Volume Ratio",x.volumeRatio===undefined?"N/A":number(x.volumeRatio)+"x")}
+  ${line("Futures OI Change",
+    x.futuresOIChangePercent===null ||
+    x.futuresOIChangePercent===undefined
+    ? "N/A" : number(x.futuresOIChangePercent)+"%")}
+  ${line("Futures OI Available",x.futuresOIAvailable ? "YES":"NO")}
 
-  <details style="margin-top:15px">
+  <div class="signal ${direction==="WAIT"?"wait":"pass"}">
+   ${direction==="WAIT" ? "WAIT - WAITING" : direction+" - "+strength}
+  </div>
+
+  <details>
    <summary>View Six Conditions</summary>
-   ${conditionHTML(conditions,keys)}
+   <h4>BULLISH CONDITIONS</h4>
+   ${conditionList(bullish)}
+   <h4>BEARISH CONDITIONS</h4>
+   ${conditionList(bearish)}
   </details>
 
-  <p class="small">Candle: ${safe(item.candleTimeIST || item.candleTime)}</p>
-  <p class="small">Data fetched: ${safe(item.dataFetchedAt)}</p>
-  <p class="small">Reason: ${safe(item.error || item.reason)}</p>
+  <p class="small">Candle: ${val(x.candleTimeIST || x.candleTime)}</p>
+  <p class="small">Data fetched: ${val(x.dataFetchedAt)}</p>
+  <p class="small">Message: ${val(x.message || x.error || "Live data")}</p>
  </div>`;
 }
 
-function showNews(news){
- if(!news)return;
- document.getElementById("newsStatus").textContent=safe(news.status);
- document.getElementById("sentiment").textContent=safe(news.sentiment);
- document.getElementById("newsScore").textContent=number(news.score);
- document.getElementById("goodNews").textContent=number(news.goodCount);
- document.getElementById("badNews").textContent=number(news.badCount);
+function renderNews(news){
+ if(!news){
+  return "News unavailable";
+ }
 
- const headlines=Array.isArray(news.headlines)?news.headlines:[];
- document.getElementById("newsHeadlines").innerHTML=
- headlines.length?headlines.map(n=>`
- <div class="news-item">
- <strong>${safe(n.title)}</strong>
- <div class="small">${safe(n.publishedAt || n.publishedDate)}</div>
- </div>`).join(""):'<div class="empty">No fresh news available</div>';
+ let headlines=Array.isArray(news.headlines)
+  ? news.headlines : [];
+
+ return `
+ <p>Status: <b>${val(news.status)}</b></p>
+ <p>Sentiment: <b class="wait">${val(news.sentiment)}</b></p>
+ <p>News Score: ${number(news.score)}</p>
+ <p>Good: ${number(news.goodCount)} |
+ Bad: ${number(news.badCount)}</p>
+ <h3>HEADLINES</h3>
+ ${headlines.length ? headlines.map(n=>
+  `<p>• ${typeof n==="string"?n:val(n.title)}</p>`
+ ).join("") : "No fresh news"}
+ `;
 }
 
-function isVeryStrongSell(signal){
- const strength=String(signal.strength || signal.signal || signal.type || "").toUpperCase();
- const side=String(signal.direction || signal.optionSide || "").toUpperCase();
- const conditions=signal.bearishConditions || signal.conditions;
- const allSix=conditions && bearishKeys.every(([key])=>conditions[key]===true);
- return (
-  (strength==="VERY STRONG SELL" ||
-   strength==="VERY_STRONG_SELL" ||
-   strength==="VERY_STRONG") &&
-  (side==="SELL" || side==="PE" || side==="PUT" || side==="BEARISH") &&
-  allSix===true
- );
+function signalKey(s){
+ return String(s.id || s.signalId ||
+  [s.symbol,s.optionSide,s.strikePrice,s.signalTime].join("_"));
 }
 
-function showActiveSignals(data){
- const signals=getArray(data).filter(isVeryStrongSell);
- document.getElementById("activeSignals").innerHTML=
- signals.length?signals.map(s=>`
- <div class="index-card">
-  <h2 class="red">VERY STRONG SELL</h2>
-  <div class="line">Index <strong>${safe(s.symbol)}</strong></div>
-  <div class="line">Option <strong>${safe(s.optionSymbol || s.optionSide)}</strong></div>
-  <div class="line">Strike <strong>${safe(s.strikePrice)}</strong></div>
-  <div class="line">Entry <strong>${number(s.entryPrice)}</strong></div>
-  <div class="line">Stop Loss <strong>${number(s.stopLoss)}</strong></div>
-  <div class="line">Target <strong>${number(s.target)}</strong></div>
-  <div class="line">Time <strong>${safe(s.signalTime)}</strong></div>
- </div>`).join("")
- :'<div class="empty">No VERY STRONG SELL signals. All six conditions must pass.</div>';
+function renderActive(data){
+ const list=Array.isArray(data) ? data :
+  Array.isArray(data.data) ? data.data :
+  Array.isArray(data.signals) ? data.signals : [];
+
+ const fresh=new Set(list.map(signalKey));
+
+ if(soundEnabled){
+  for(const key of fresh){
+   if(!previousSignals.has(key)) playSound();
+  }
+ }
+ previousSignals=fresh;
+
+ if(!list.length){
+  return "No active signals yet.";
+ }
+
+ return list.map(s=>`
+ <div class="index">
+  <div class="name">${val(s.symbol)}</div>
+  ${line("Signal",val(s.signal || s.direction))}
+  ${line("Option Side",val(s.optionSide))}
+  ${line("Strike Price",val(s.strikePrice || s.strike))}
+  ${line("Strength",val(s.strength))}
+  ${line("Entry Price",number(s.entryPrice))}
+  ${line("Stop Loss",number(s.stopLoss))}
+  ${line("Target",number(s.target))}
+  ${line("Signal Time",val(s.signalTime || s.createdAt))}
+ </div>
+ `).join("");
 }
 
-async function refreshDashboard(){
- const button=document.querySelector("button");
- button.disabled=true;
- document.getElementById("apiStatus").textContent="FETCHING...";
+async function loadDashboard(){
+ document.getElementById("server").textContent="CONNECTING...";
 
  try{
-   // API 1: Four Index Scan
-   const data = await getAPI("/api/scan");
+  const [scan,signals]=await Promise.all([
+   getAPI("/api/scan"),
+   getAPI("/api/signals/active")
+  ]);
 
-   // API 2: Active Option Signals
-   const optionData = await getAPI("/api/signals/active");
+  if(!scan.success) throw new Error("Scan API failed");
+  document.getElementById("server").textContent="CONNECTED - LIVE";
+  document.getElementById("server").className="pass";
 
-   const results=getArray(data);
-   const order=["NIFTY","BANKNIFTY","SENSEX","FINNIFTY"];
+  document.getElementById("updated").textContent=
+   new Date().toLocaleString("en-IN");
 
-   document.getElementById("indexCards").innerHTML=
-   order.map(symbol=>{
-     const item=results.find(x=>String(x.symbol).toUpperCase()===symbol);
-     return item?createIndexCard(item):
-     `<div class="index-card"><h2>${symbol}</h2>
-     <div class="empty">Data unavailable</div></div>`;
-   }).join("");
+  const results=Array.isArray(scan.results)?scan.results:[];
 
-   showNews(data.news);
-   showActiveSignals(optionData);
+  document.getElementById("indexes").innerHTML=
+   results.length ? results.map(renderIndex).join("") :
+   "No index results available";
 
-   const status=data.status || "CONNECTED - LIVE";
-   document.getElementById("serverStatus").textContent=status;
-   document.getElementById("serverStatus").className="green";
-   document.getElementById("apiStatus").textContent="CONNECTED";
-   document.getElementById("lastUpdate").textContent=
-    data.scanTimeIST || data.scanTime || new Date().toLocaleString();
+  document.getElementById("news").innerHTML=
+   renderNews(scan.news);
 
-   document.getElementById("version").textContent=safe(data.version);
-   document.getElementById("masterLoaded").textContent=
-    data.masterLoaded===true?"YES":safe(data.masterLoaded);
-   document.getElementById("scanRunning").textContent=safe(data.scanRunning);
-   document.getElementById("signalCount").textContent=
-    getArray(optionData).length;
-   document.getElementById("historyCount").textContent=
-    safe(optionData.historyCount ?? data.historyCount ?? 0);
+  document.getElementById("active").innerHTML=
+   renderActive(signals);
+
+  document.getElementById("info").innerHTML=`
+   ${line("Version",scan.version)}
+   ${line("Master Loaded",scan.masterLoaded ? "YES":"NO")}
+   ${line("Scan Running",scan.scanRunning ? "YES":"NO")}
+   ${line("Active Signals",scan.activeSignals)}
+   ${line("History Count",scan.historyCount)}
+   ${line("Scan Time",scan.scanTimeIST || scan.scanTime)}
+  `;
 
  }catch(error){
-   document.getElementById("serverStatus").textContent="API ERROR";
-   document.getElementById("serverStatus").className="red";
-   document.getElementById("apiStatus").textContent=error.message;
-   console.error("Dashboard error:",error);
- }finally{
-   button.disabled=false;
+  document.getElementById("server").textContent="API ERROR";
+  document.getElementById("server").className="fail";
+  document.getElementById("info").textContent=error.message;
  }
 }
 
-refreshDashboard();
-setInterval(refreshDashboard,15000);
+function playSound(){
+ try{
+  const ctx=new (window.AudioContext || window.webkitAudioContext)();
+  const oscillator=ctx.createOscillator();
+  const gain=ctx.createGain();
+  oscillator.connect(gain);
+  gain.connect(ctx.destination);
+  oscillator.frequency.value=900;
+  gain.gain.value=0.15;
+  oscillator.start();
+  oscillator.stop(ctx.currentTime+0.4);
+ }catch(e){}
+}
+
+function enableSound(){
+ soundEnabled=true;
+ alert("Sound alert enabled");
+}
+
+function toggleAuto(){
+ autoRefresh=!autoRefresh;
+ document.getElementById("autoBtn").textContent=
+  "AUTO: "+(autoRefresh?"ON":"OFF");
+ startAuto();
+}
+
+function startAuto(){
+ if(timer) clearInterval(timer);
+ if(autoRefresh){
+  timer=setInterval(loadDashboard,15000);
+ }
+}
+
+loadDashboard();
+startAuto();
 
 </script>
 </body>
